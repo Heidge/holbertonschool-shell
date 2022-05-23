@@ -1,0 +1,2 @@
+#!/bin/bash
+if user=guillaume hello then chown vincent hello
