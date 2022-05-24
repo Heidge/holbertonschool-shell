@@ -1,2 +1,2 @@
 #!/bin/bash
-find iacta | grep n3
+cat -n iacta | grep '^ *3'
