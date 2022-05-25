@@ -1,2 +1,2 @@
 #!/bin/bash
-rev *.tsv | sort -nr | cut -f9 | head -11
+rev *.tsv | rev | sort -nr | cut -f9 | head -11
