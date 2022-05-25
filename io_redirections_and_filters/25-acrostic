@@ -1,2 +1,2 @@
 #!/bin/bash
-cut c1 | td -d "\n" | paste
+cut c1 | paste
