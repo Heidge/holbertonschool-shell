@@ -1,2 +1,2 @@
 #!/bin/bash
-cut -fb "1"
+find -printf | cut c1
