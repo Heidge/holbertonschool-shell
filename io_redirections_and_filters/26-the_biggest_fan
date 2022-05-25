@@ -1,2 +1,2 @@
 #!/bin/bash
-sort -k 8 *.tsv
+cat *.tsv | rev | sort -nr | head -11 | cut -f9
