@@ -1,2 +1,2 @@
 #!/bin/bash
-cut -f1 *.tsv | sort | uniq -c | sort -nr | head -11 | cut -c 9-
+cut -f1 *.tsv | uniq -u | sort | uniq -c | sort -nr | head -11 | cut -c 9-
