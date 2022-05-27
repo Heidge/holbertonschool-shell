@@ -1,2 +1,2 @@
 #!/bin/bash
-printf 'NR%2==1'
+printf '1!n'
