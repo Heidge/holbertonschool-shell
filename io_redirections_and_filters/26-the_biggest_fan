@@ -1,2 +1,2 @@
 #!/bin/bash
-cat *.tsv | cut -d ' ' -f 1 | sort | uniq -c | sort -nr | head -11 | cut -c 9-
+cat *.tsv | cut-f1 | sort | uniq -c | sort -nr | cut -c 9- | head -11
