@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # script for run 10 times best school
-for((c=1; c<=10; c++));
-do echo "Best School";
+for i in "School" "School" "School" "School" "School" "School" "School" "School" "School" "School";
+do echo "Best" $i;
 done
 
