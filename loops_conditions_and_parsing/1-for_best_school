@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-for in 'cat list'; do 'cat list' ; done
+# for in 'cat list'; do 'cat list' ; done
 
