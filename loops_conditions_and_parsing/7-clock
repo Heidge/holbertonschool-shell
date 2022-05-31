@@ -10,7 +10,7 @@ do
 	m=$((m+1))
 	echo $m
     done
-    ((h++))
+    h=$((h+1))
 done    
 
 
