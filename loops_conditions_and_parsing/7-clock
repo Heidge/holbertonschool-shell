@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#script
+h=0
+while [ $h -lt 13 ];
+do
+    echo "Hour: $h"
+    m=0
+    while [ $m -lt 59 ];
+    do
+	m=$((m+1))
+	echo $m
+    done
+    ((h++))
+done    
+
+
+
+
+
+
+
+ 
+		    
+		 
