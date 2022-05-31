@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#script
+n=0
+while [ $n -lt 100 ]
+do
+    let "n=$n+1";
+    if [ $((n % 15)) -eq 0 ];
+    then echo "FizzBuzz";
+    elif [ $(( n % 3 )) -eq 0 ];
+    then echo "Fizz"
+    elif [ $(( n % 5 )) -eq 0 ];
+	 then echo "Buzz"
+	 else echo "$n"
+    fi
+done
