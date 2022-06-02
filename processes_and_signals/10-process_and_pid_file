@@ -5,7 +5,8 @@ while true
 do
     echo "To infinity and beyond"
     sleep 2
-    trap "echo I hate the kill command" 15 
+    trap "echo I hate the kill command" 15
+    trap "rm /var/run/myscript.pid" 2 15
 done
 
 
