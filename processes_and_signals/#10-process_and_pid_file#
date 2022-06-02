@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-#script for 9th task
-sudo echo "echo$$" > /var/run/myscript.pid
-
-
