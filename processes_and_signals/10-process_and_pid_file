@@ -5,6 +5,8 @@ while true
 do
     echo "To infinity and beyond"
     sleep 2
+    trap "I hate the kill command" 15
+    trap "Y U no love me?!" 2	
 done
 
 
