@@ -5,22 +5,22 @@ case "$1" in
    start)
             ./manage_my_process start
             echo "$$" > /var/run/my_process.pid
-            echo "manage_my_process started"
+            cat "manage_my_process started"
             ;;
    stop) 
             ./manage_my_process stop
             rm /var/run/my_process.pid
-            echo "manage_my_process stopped"
+            cat "manage_my_process stopped"
             ;;
    restart)
             ./manage_my_process stop
             rm /var/run/my_process.pid
 	    ./manage_my_process start
 	    echo "$$" > /var/run/my_process.pid
-            echo "manage_my_process restarted"
+            cat "manage_my_process restarted"
             ;;
    *)
-       echo "Usage: manage_my_process {start|stop|restart}"
+       cat "Usage: manage_my_process {start|stop|restart}"
        exit 1
             ;;
 esac
