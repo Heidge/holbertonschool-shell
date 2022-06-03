@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#final boss, oh yeah
+/tmp/manage_my_process start
+echo "echo $$"
