@@ -1,22 +1,24 @@
 #!/usr/bin/env bash
 #final boss, oh yeah
-./manage_my_process &
-case "$!" in
-   start)
-            echo "$$" > /var/run/my_process.pid
+case "$1" in
+    start)
+	    ./manage_my_process &
+            echo "$!" > /var/run/my_process.pid
             echo "manage_my_process started"
             ;;
    stop) 
             rm /var/run/my_process.pid
             echo "manage_my_process stopped"
+	    pkill manage_my_process
             ;;
    restart)
+            pkill manage_my_process
             rm /var/run/my_process.pid
-	    echo "$$" > /var/run/my_process.pid
+	    ./manage_my_process &
+	    echo "$!" > /var/run/my_process.pid
             echo "manage_my_process restarted"
             ;;
    *)
        echo "Usage: manage_my_process {start|stop|restart}"
-       exit 1
             ;;
 esac
