@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #final boss, oh yeah
-case “$1” in
+test –f ./manage_my_process || exit 0
+case "$1" in
    start)
             ./manage_my_process start
             echo "$$" > /var/run/my_process.pid
