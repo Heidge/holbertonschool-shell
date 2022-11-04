@@ -1,6 +1,5 @@
 # <p align=center>Shell, basics</p>
 <br />
-
-##About the project
+## About the project
 
 Shell discovery and first bash commands
