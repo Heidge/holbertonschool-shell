@@ -1,4 +1,4 @@
-<h1 align=center>Shell, basics<h1>
+# <p align=center>Shell, basics</p>
 <br />
 
 ## About the project
