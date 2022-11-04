@@ -1,1 +1,3 @@
-Note for project shell basics
+# Shell, basics
+## About the project
+Shell discovery and first bash commands
