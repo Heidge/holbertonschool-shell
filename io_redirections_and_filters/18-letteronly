@@ -1,2 +1,2 @@
 #!/bin/bash
-cat /etc/passwd | grep '^[[:upper:]]|[[:lower:]]'
+cat /etc/passwd | grep '^[A-Za-z]'
