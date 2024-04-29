@@ -23,9 +23,8 @@ Shell discovery and first bash commands
 
 ## Projets
 
-<ul>
-  <li>[Shell, basics](#https://github.com/Heidge/holbertonschool-shell/tree/master/basics)</li>
-  <li>[Shell, permissions](#https://github.com/Heidge/holbertonschool-shell/tree/master/permissions)</li>
-  <li>[Shell, I/O Redirections and filters](#https://github.com/Heidge/holbertonschool-shell/tree/master/io_redirections_and_filters)</li>
-  <li>[Shell, init files, variables and expansions](#https://github.com/Heidge/holbertonschool-shell/tree/master/init_files_variables_and_expansions)</li>
-</ul>
+
+[Shell, basics](https://github.com/Heidge/holbertonschool-shell/tree/master/basics)
+[Shell, permissions](https://github.com/Heidge/holbertonschool-shell/tree/master/permissions)
+[Shell, I/O Redirections and filters](https://github.com/Heidge/holbertonschool-shell/tree/master/io_redirections_and_filters)
+[Shell, init files, variables and expansions](https://github.com/Heidge/holbertonschool-shell/tree/master/init_files_variables_and_expansions)
