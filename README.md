@@ -27,3 +27,5 @@ Shell discovery and first bash commands
 - [Shell, permissions](https://github.com/Heidge/holbertonschool-shell/tree/master/permissions)
 - [Shell, I/O Redirections and filters](https://github.com/Heidge/holbertonschool-shell/tree/master/io_redirections_and_filters)
 - [Shell, init files, variables and expansions](https://github.com/Heidge/holbertonschool-shell/tree/master/init_files_variables_and_expansions)
+- [Shell, loops, conditions and parsing](https://github.com/Heidge/holbertonschool-shell/tree/master/loops_conditions_and_parsing)
+- [Shell, processes and signals](https://github.com/Heidge/holbertonschool-shell/tree/master/processes_and_signals)
