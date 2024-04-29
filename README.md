@@ -1,9 +1,9 @@
 # <p align=center>Shell</p>
 <br />
 
-## About the project
+## About projects
 <br />
-Shell discovery and first bash commands
+Shell discovery and first bash commands.
 <br />
 
 ## Requirements
