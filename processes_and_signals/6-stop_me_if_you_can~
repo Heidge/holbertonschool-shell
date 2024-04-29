@@ -1,3 +1,0 @@
-#!/bin/env bash
-# script with a new kill
-pkill --signal  SIGKILL 4-to_infinity_and_beyond
