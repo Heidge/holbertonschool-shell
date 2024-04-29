@@ -21,8 +21,7 @@ Shell discovery and first bash commands
   <li>All your scripts must be executable. To make your file executable, use the chmod command: chmod u+x file. Later, we’ll learn more about how to utilize this           command.</li>
 </ul>
 
-## Projets
-
+## Projects
 
 - [Shell, basics](https://github.com/Heidge/holbertonschool-shell/tree/master/basics)
 - [Shell, permissions](https://github.com/Heidge/holbertonschool-shell/tree/master/permissions)
