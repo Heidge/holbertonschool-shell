@@ -1,6 +1,5 @@
 # Shell, permissions
 
-
 ## Requirements
 
 ### General

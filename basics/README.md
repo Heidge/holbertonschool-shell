@@ -1,4 +1,4 @@
-# Sandpiles
+# Shell, basics
 
 ## Requirements
 
