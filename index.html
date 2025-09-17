@@ -1,0 +1,3098 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programme d'Entraînement Technique</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .question-type {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .difficulty {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .difficulty.facile { background: #dcfce7; color: #166534; }
+        .difficulty.moyen { background: #fef3c7; color: #92400e; }
+        .difficulty.difficile { background: #fecaca; color: #991b1b; }
+
+        .question-content {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            border-left: 4px solid #667eea;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f8f9fa;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #e0e7ff;
+        }
+
+        .option.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .option.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .explanation {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .timer {
+            background: #1f2937;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .results {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .category-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .category-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Programme d'Entraînement Technique</h1>
+            <p>Préparez-vous efficacement à votre test technique !</p>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number" id="totalQuestions">50</div>
+                    <div>Questions</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="currentScore">0</div>
+                    <div>Score</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="timeSpent">0:00</div>
+                    <div>Temps</div>
+                </div>
+            </div>
+
+            <div class="category-selector">
+                <div class="category-btn active" data-category="all">Toutes</div>
+                <div class="category-btn" data-category="html">HTML5</div>
+                <div class="category-btn" data-category="css">CSS</div>
+                <div class="category-btn" data-category="javascript">JavaScript</div>
+                <div class="category-btn" data-category="sql">SQL</div>
+                <div class="category-btn" data-category="algo">Algorithmique</div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="startBtn">🎯 Commencer l'entraînement</button>
+                <button class="btn btn-secondary" id="randomBtn">🎲 Question aléatoire</button>
+                <button class="btn btn-secondary" id="resetBtn">🔄 Recommencer</button>
+            </div>
+        </div>
+
+        <div id="questionContainer" class="hidden">
+            <!-- Questions will be inserted here -->
+        </div>
+
+        <div id="resultsContainer" class="hidden">
+            <!-- Results will be shown here -->
+        </div>
+    </div>
+
+    <script>
+        class TechTrainingProgram {
+            constructor() {
+                this.questions = this.generateQuestions();
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.selectedCategory = 'all';
+                this.filteredQuestions = [...this.questions];
+                this.startTime = null;
+                this.answers = [];
+                
+                this.initializeEventListeners();
+                this.updateStats();
+            }
+
+            generateQuestions() {
+                return [
+                    // HTML5 Questions
+                    {
+                        type: 'html',
+                        difficulty: 'facile',
+                        question: 'Quelle balise HTML5 est utilisée pour définir une section de navigation ?',
+                        options: ['<menu>', '<nav>', '<navigation>', '<section>'],
+                        correct: 1,
+                        explanation: 'La balise &lt;nav&gt; est spécifiquement conçue pour marquer les sections de navigation principales d\'une page. Elle améliore l\'accessibilité et la sémantique du document.'
+                    },
+                    {
+                        type: 'html',
+                        difficulty: 'moyen',
+                        question: 'Quel attribut HTML5 permet de rendre un champ obligatoire dans un formulaire ?',
+                        code: '<input type="email" name="email" ??? >',
+                        options: ['mandatory="true"', 'required', 'obligatory', 'validate="required"'],
+                        correct: 1,
+                        explanation: 'L\'attribut "required" est un attribut booléen HTML5 qui rend un champ de formulaire obligatoire. Le navigateur empêchera la soumission du formulaire si ce champ est vide.'
+                    },
+                    {
+                        type: 'html',
+                        difficulty: 'difficile',
+                        question: 'Quelle est la différence entre localStorage et sessionStorage ?',
+                        options: [
+                            'localStorage expire après 24h, sessionStorage jamais',
+                            'sessionStorage persiste même après fermeture du navigateur',
+                            'localStorage persiste après fermeture, sessionStorage est supprimé à la fermeture de l\'onglet',
+                            'Aucune différence significative'
+                        ],
+                        correct: 2,
+                        explanation: 'localStorage persiste même après la fermeture du navigateur, tandis que sessionStorage est supprimé dès que l\'onglet est fermé. Les deux ont la même API mais des durées de vie différentes.'
+                    },
+
+                    // CSS Questions
+                    {
+                        type: 'css',
+                        difficulty: 'facile',
+                        question: 'Quelle propriété CSS permet de centrer un élément horizontalement ?',
+                        options: ['text-align: center', 'margin: 0 auto', 'center: true', 'align: center'],
+                        correct: 1,
+                        explanation: 'margin: 0 auto centre un élément de type block horizontalement en définissant des marges automatiques à gauche et droite, à condition que l\'élément ait une largeur définie.'
+                    },
+                    {
+                        type: 'css',
+                        difficulty: 'moyen',
+                        question: 'Quelle unité CSS est relative à la taille de la police de l\'élément parent ?',
+                        options: ['px', 'em', 'rem', 'vh'],
+                        correct: 1,
+                        explanation: 'em est relatif à la taille de police de l\'élément parent. 1em = taille de police du parent. rem est relatif à la taille de police de l\'élément racine (html).'
+                    },
+                    {
+                        type: 'css',
+                        difficulty: 'difficile',
+                        question: 'Comment créer une grille CSS avec 3 colonnes de taille égale et un espacement de 20px ?',
+                        options: [
+                            'grid-template-columns: repeat(3, 1fr); gap: 20px;',
+                            'columns: 3; margin: 20px;',
+                            'flex: 3; padding: 20px;',
+                            'width: 33.33%; margin: 20px;'
+                        ],
+                        correct: 0,
+                        explanation: 'CSS Grid utilise grid-template-columns avec repeat(3, 1fr) pour 3 colonnes égales et gap pour l\'espacement. 1fr représente une fraction de l\'espace disponible.'
+                    },
+
+                    // JavaScript Questions
+                    {
+                        type: 'javascript',
+                        difficulty: 'facile',
+                        question: 'Comment déclarer une variable en JavaScript (ES6+) ?',
+                        options: ['var myVar', 'let myVar', 'const myVar', 'Toutes les réponses'],
+                        correct: 3,
+                        explanation: 'En ES6+, on peut utiliser var (portée function), let (portée block, réassignable) et const (portée block, non réassignable). let et const sont préférés.'
+                    },
+                    {
+                        type: 'javascript',
+                        difficulty: 'moyen',
+                        question: 'Que retourne ce code ?',
+                        code: 'console.log(typeof null);',
+                        options: ['null', 'undefined', 'object', 'boolean'],
+                        correct: 2,
+                        explanation: 'C\'est un bug historique de JavaScript : typeof null retourne "object" au lieu de "null". Ce comportement est conservé pour la compatibilité.'
+                    },
+                    {
+                        type: 'javascript',
+                        difficulty: 'difficile',
+                        question: 'Que fait ce code ?',
+                        code: 'const arr = [1,2,3];\nconst [a, ...rest] = arr;\nconsole.log(rest);',
+                        options: ['[1]', '[2,3]', '[1,2,3]', 'undefined'],
+                        correct: 1,
+                        explanation: 'C\'est du destructuring avec rest operator. "a" prend le premier élément (1), "...rest" prend le reste du tableau [2,3].'
+                    },
+
+                    // SQL Questions
+                    {
+                        type: 'sql',
+                        difficulty: 'facile',
+                        question: 'Quelle commande SQL permet de récupérer toutes les données d\'une table ?',
+                        options: ['GET * FROM table', 'SELECT * FROM table', 'FETCH * FROM table', 'RETRIEVE * FROM table'],
+                        correct: 1,
+                        explanation: 'SELECT * FROM table_name est la syntaxe standard SQL pour récupérer toutes les colonnes de toutes les lignes d\'une table.'
+                    },
+                    {
+                        type: 'sql',
+                        difficulty: 'moyen',
+                        question: 'Quelle clause SQL permet de grouper les résultats ?',
+                        code: 'SELECT category, COUNT(*) FROM products ??? category;',
+                        options: ['GROUP BY', 'ORDER BY', 'SORT BY', 'CLUSTER BY'],
+                        correct: 0,
+                        explanation: 'GROUP BY permet de regrouper les lignes ayant des valeurs identiques dans une ou plusieurs colonnes. Souvent utilisé avec des fonctions d\'agrégation comme COUNT, SUM, AVG.'
+                    },
+                    {
+                        type: 'sql',
+                        difficulty: 'difficile',
+                        question: 'Quelle est la différence entre INNER JOIN et LEFT JOIN ?',
+                        options: [
+                            'Aucune différence',
+                            'INNER JOIN retourne toutes les lignes, LEFT JOIN seulement les correspondances',
+                            'LEFT JOIN retourne toutes les lignes de la table de gauche + correspondances, INNER JOIN seulement les correspondances',
+                            'LEFT JOIN est plus rapide qu\'INNER JOIN'
+                        ],
+                        correct: 2,
+                        explanation: 'LEFT JOIN retourne toutes les lignes de la table de gauche même sans correspondance (avec NULL pour les colonnes de droite). INNER JOIN ne retourne que les lignes avec correspondances dans les deux tables.'
+                    },
+
+                    // Algorithmique Questions
+                    {
+                        type: 'algo',
+                        difficulty: 'facile',
+                        question: 'Quelle est la complexité temporelle d\'une recherche dans un tableau non trié ?',
+                        options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+                        correct: 2,
+                        explanation: 'Dans un tableau non trié, on doit potentiellement examiner chaque élément pour trouver celui recherché, d\'où une complexité linéaire O(n) dans le pire cas.'
+                    },
+                    {
+                        type: 'algo',
+                        difficulty: 'moyen',
+                        question: 'Quel algorithme de tri a une complexité moyenne de O(n log n) ?',
+                        options: ['Bubble Sort', 'Selection Sort', 'Quick Sort', 'Insertion Sort'],
+                        correct: 2,
+                        explanation: 'Quick Sort a une complexité moyenne de O(n log n). Bubble Sort, Selection Sort et Insertion Sort ont une complexité de O(n²) en moyenne.'
+                    },
+                    {
+                        type: 'algo',
+                        difficulty: 'difficile',
+                        question: 'Que retourne cette fonction récursive ?',
+                        code: 'function mystere(n) {\n  if (n <= 1) return 1;\n  return n * mystere(n - 1);\n}',
+                        options: ['La somme de 1 à n', 'La factorielle de n', 'La puissance de n', 'La suite de Fibonacci'],
+                        correct: 1,
+                        explanation: 'Cette fonction calcule la factorielle de n (n!). Elle multiplie n par la factorielle de (n-1), avec 1 comme cas de base pour n ≤ 1.'
+                    },
+
+                    // Questions supplémentaires pour atteindre 4h de contenu...
+                    {
+                        type: 'html',
+                        difficulty: 'moyen',
+                        question: 'Quel attribut HTML5 permet de valider automatiquement un email ?',
+                        code: '<input type="???" name="email">',
+                        options: ['text', 'email', 'validate', 'mail'],
+                        correct: 1,
+                        explanation: 'type="email" active la validation automatique d\'email par le navigateur et peut afficher un clavier optimisé sur mobile.'
+                    },
+                    {
+                        type: 'css',
+                        difficulty: 'moyen',
+                        question: 'Quelle propriété CSS permet de rendre un élément flexible ?',
+                        options: ['display: flex', 'flexible: true', 'flex: 1', 'layout: flex'],
+                        correct: 0,
+                        explanation: 'display: flex transforme un élément en conteneur flexible (flexbox), permettant de contrôler la disposition de ses enfants.'
+                    },
+                    {
+                        type: 'javascript',
+                        difficulty: 'facile',
+                        question: 'Comment ajouter un élément à la fin d\'un tableau ?',
+                        options: ['array.add()', 'array.push()', 'array.append()', 'array.insert()'],
+                        correct: 1,
+                        explanation: 'push() ajoute un ou plusieurs éléments à la fin d\'un tableau et retourne la nouvelle longueur du tableau.'
+                    },
+                    {
+                        type: 'sql',
+                        difficulty: 'facile',
+                        question: 'Quelle clause SQL permet de filtrer les résultats ?',
+                        options: ['FILTER', 'WHERE', 'HAVING', 'IF'],
+                        correct: 1,
+                        explanation: 'WHERE permet de filtrer les lignes selon des conditions. HAVING filtre les groupes après GROUP BY.'
+                    },
+                    {
+                        type: 'algo',
+                        difficulty: 'moyen',
+                        question: 'Qu\'est-ce qu\'une structure de données LIFO ?',
+                        options: ['Queue (File)', 'Stack (Pile)', 'Array (Tableau)', 'Tree (Arbre)'],
+                        correct: 1,
+                        explanation: 'LIFO = Last In, First Out. La pile (Stack) fonctionne ainsi : le dernier élément ajouté est le premier à être retiré.'
+                    }
+                    // Continuer avec plus de questions...
+                ];
+            }
+
+            initializeEventListeners() {
+                document.getElementById('startBtn').addEventListener('click', () => this.startTraining());
+                document.getElementById('randomBtn').addEventListener('click', () => this.showRandomQuestion());
+                document.getElementById('resetBtn').addEventListener('click', () => this.reset());
+
+                // Category filters
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.filterByCategory(e.target.dataset.category));
+                });
+
+                this.updateTimer();
+            }
+
+            filterByCategory(category) {
+                this.selectedCategory = category;
+                
+                // Update UI
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.category === category);
+                });
+
+                // Filter questions
+                if (category === 'all') {
+                    this.filteredQuestions = [...this.questions];
+                } else {
+                    this.filteredQuestions = this.questions.filter(q => q.type === category);
+                }
+
+                this.currentQuestionIndex = 0;
+                this.updateStats();
+            }
+
+            startTraining() {
+                this.startTime = Date.now();
+                this.currentQuestionIndex = 0;
+                this.showQuestion();
+                
+                document.querySelector('.header').style.display = 'none';
+                document.getElementById('questionContainer').classList.remove('hidden');
+            }
+
+            showRandomQuestion() {
+                const randomIndex = Math.floor(Math.random() * this.filteredQuestions.length);
+                this.currentQuestionIndex = randomIndex;
+                this.showQuestion();
+                
+                document.querySelector('.header').style.display = 'none';
+                document.getElementById('questionContainer').classList.remove('hidden');
+            }
+
+            showQuestion() {
+                const question = this.filteredQuestions[this.currentQuestionIndex];
+                const container = document.getElementById('questionContainer');
+                
+                const difficultyClass = question.difficulty;
+                const typeColors = {
+                    html: '#e34c26',
+                    css: '#1572b6', 
+                    javascript: '#f7df1e',
+                    sql: '#336791',
+                    algo: '#6b46c1'
+                };
+
+                container.innerHTML = `
+                    <div class="question-card">
+                        <div class="question-header">
+                            <div class="question-type" style="background: ${typeColors[question.type]}">
+                                ${question.type.toUpperCase()}
+                            </div>
+                            <div class="difficulty ${difficultyClass}">${question.difficulty}</div>
+                        </div>
+                        
+                        <div class="question-content">
+                            <h3>Question ${this.currentQuestionIndex + 1}/${this.filteredQuestions.length}</h3>
+                            <p>${question.question}</p>
+                            ${question.code ? `<div class="code-block">${question.code}</div>` : ''}
+                        </div>
+
+                        <div class="options">
+                            ${question.options.map((option, index) => 
+                                `<div class="option" data-index="${index}">${option}</div>`
+                            ).join('')}
+                        </div>
+
+                        <div class="controls">
+                            <button class="btn btn-primary" id="submitAnswer">Valider</button>
+                            <button class="btn btn-secondary" id="nextQuestion" style="display:none;">Question suivante</button>
+                            <button class="btn btn-secondary" id="backToMenu">Retour menu</button>
+                        </div>
+
+                        <div class="explanation" id="explanation">
+                            <h4>💡 Explication :</h4>
+                            <p>${question.explanation}</p>
+                        </div>
+                    </div>
+                `;
+
+                this.attachQuestionEventListeners();
+                this.updateProgress();
+            }
+
+            attachQuestionEventListeners() {
+                // Option selection
+                document.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                        e.target.classList.add('selected');
+                    });
+                });
+
+                // Submit answer
+                document.getElementById('submitAnswer').addEventListener('click', () => this.submitAnswer());
+                
+                // Next question
+                document.getElementById('nextQuestion').addEventListener('click', () => this.nextQuestion());
+                
+                // Back to menu
+                document.getElementById('backToMenu').addEventListener('click', () => this.backToMenu());
+            }
+
+            submitAnswer() {
+                const selectedOption = document.querySelector('.option.selected');
+                if (!selectedOption) {
+                    alert('Veuillez sélectionner une réponse !');
+                    return;
+                }
+
+                const selectedIndex = parseInt(selectedOption.dataset.index);
+                const question = this.filteredQuestions[this.currentQuestionIndex];
+                const isCorrect = selectedIndex === question.correct;
+
+                // Show correct/incorrect
+                document.querySelectorAll('.option').forEach((option, index) => {
+                    if (index === question.correct) {
+                        option.classList.add('correct');
+                    } else if (index === selectedIndex && !isCorrect) {
+                        option.classList.add('incorrect');
+                    }
+                });
+
+                // Update score
+                if (isCorrect) {
+                    this.score++;
+                    this.updateStats();
+                }
+
+                // Show explanation
+                document.getElementById('explanation').classList.add('show');
+                
+                // Update buttons
+                document.getElementById('submitAnswer').style.display = 'none';
+                document.getElementById('nextQuestion').style.display = 'inline-block';
+
+                // Save answer
+                this.answers[this.currentQuestionIndex] = {
+                    selected: selectedIndex,
+                    correct: isCorrect,
+                    question: question
+                };
+            }
+
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                
+                if (this.currentQuestionIndex >= this.filteredQuestions.length) {
+                    this.showResults();
+                } else {
+                    this.showQuestion();
+                }
+            }
+
+            showResults() {
+                const percentage = Math.round((this.score / this.filteredQuestions.length) * 100);
+                const timeSpent = this.formatTime(Date.now() - this.startTime);
+                
+                document.getElementById('questionContainer').classList.add('hidden');
+                document.getElementById('resultsContainer').classList.remove('hidden');
+                
+                document.getElementById('resultsContainer').innerHTML = `
+                    <div class="results">
+                        <h2>🎉 Résultats de l'entraînement</h2>
+                        <div class="score">${percentage}%</div>
+                        <p>Vous avez obtenu <strong>${this.score}/${this.filteredQuestions.length}</strong> bonnes réponses</p>
+                        <p>Temps total : <strong>${timeSpent}</strong></p>
+                        
+                        <div class="stats" style="margin: 30px 0;">
+                            <div class="stat">
+                                <div class="stat-number" style="color: #10b981;">${this.score}</div>
+                                <div>Correctes</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number" style="color: #ef4444;">${this.filteredQuestions.length - this.score}</div>
+                                <div>Incorrectes</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">${percentage}%</div>
+                                <div>Réussite</div>
+                            </div>
+                        </div>
+
+                        <div class="controls">
+                            <button class="btn btn-primary" onclick="location.reload()">🔄 Recommencer</button>
+                            <button class="btn btn-secondary" id="reviewAnswers">📝 Revoir les réponses</button>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('reviewAnswers').addEventListener('click', () => this.reviewAnswers());
+            }
+
+            reviewAnswers() {
+                // Implémenter la revue des réponses
+                alert('Fonctionnalité de revue des réponses à venir !');
+            }
+
+            updateProgress() {
+                const progress = ((this.currentQuestionIndex + 1) / this.filteredQuestions.length) * 100;
+                document.getElementById('progressFill').style.width = `${progress}%`;
+            }
+
+            updateStats() {
+                document.getElementById('totalQuestions').textContent = this.filteredQuestions.length;
+                document.getElementById('currentScore').textContent = this.score;
+            }
+
+            updateTimer() {
+                setInterval(() => {
+                    if (this.startTime) {
+                        const elapsed = Date.now() - this.startTime;
+                        document.getElementById('timeSpent').textContent = this.formatTime(elapsed);
+                    }
+                }, 1000);
+            }
+
+            formatTime(ms) {
+                const seconds = Math.floor(ms / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+
+            backToMenu() {
+                document.querySelector('.header').style.display = 'block';
+                document.getElementById('questionContainer').classList.add('hidden');
+                document.getElementById('resultsContainer').classList.add('hidden');
+            }
+
+            reset() {
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.startTime = null;
+                this.answers = [];
+                this.updateStats();
+                this.backToMenu();
+            }
+        }
+
+        // Ajouter plus de questions pour atteindre 4h de contenu
+        const additionalQuestions = [
+            // HTML5 - Questions avancées
+            {
+                type: 'html',
+                difficulty: 'difficile',
+                question: 'Que fait cet attribut HTML5 ?',
+                code: '<input type="text" autocomplete="off" spellcheck="false">',
+                options: [
+                    'Désactive l\'autocomplétion et la correction orthographique',
+                    'Active l\'autocomplétion mais pas la correction',
+                    'N\'a aucun effet',
+                    'Provoque une erreur de validation'
+                ],
+                correct: 0,
+                explanation: 'autocomplete="off" désactive l\'autocomplétion du navigateur, spellcheck="false" désactive la correction orthographique pour ce champ.'
+            },
+            {
+                type: 'html',
+                difficulty: 'moyen',
+                question: 'Quelle balise HTML5 définit un contenu mis à part du contenu principal ?',
+                options: ['<sidebar>', '<aside>', '<extra>', '<secondary>'],
+                correct: 1,
+                explanation: '<aside> représente une section dont le contenu est tangentiellement lié au contenu principal (barres latérales, publicités, etc.).'
+            },
+
+            {
+                type: 'css',
+                difficulty: 'difficile',
+                question: 'Quelle est la différence entre "position: absolute" et "position: fixed" ?',
+                options: [
+                    'Aucune différence',
+                    'absolute se positionne par rapport au viewport, fixed par rapport au parent',
+                    'absolute se positionne par rapport au parent positionné, fixed par rapport au viewport',
+                    'fixed ne fonctionne que sur mobile'
+                ],
+                correct: 2,
+                explanation: 'position: absolute se positionne par rapport au plus proche ancêtre positionné (non-static). position: fixed se positionne par rapport au viewport et reste fixe au scroll.'
+            },
+            {
+                type: 'css',
+                difficulty: 'moyen',
+                question: 'Comment créer une transition CSS de 0.3s sur toutes les propriétés ?',
+                options: [
+                    'transition: 0.3s;',
+                    'transition: all 0.3s;',
+                    'animation: 0.3s all;',
+                    'transform: 0.3s;'
+                ],
+                correct: 1,
+                explanation: 'transition: all 0.3s; applique une transition de 0.3 seconde sur toutes les propriétés CSS qui changent.'
+            },
+            {
+                type: 'css',
+                difficulty: 'difficile',
+                question: 'Que fait ce code CSS ?',
+                code: '.element {\n  transform: translateX(50%) rotate(45deg);\n}',
+                options: [
+                    'Déplace de 50px et fait une rotation de 45°',
+                    'Déplace de 50% de sa largeur et fait une rotation de 45°',
+                    'Crée une animation infinie',
+                    'Provoque une erreur'
+                ],
+                correct: 1,
+                explanation: 'translateX(50%) déplace l\'élément de 50% de sa propre largeur vers la droite, puis rotate(45deg) le fait tourner de 45 degrés.'
+            },
+
+            // JavaScript - Questions avancées
+            {
+                type: 'javascript',
+                difficulty: 'difficile',
+                question: 'Que retourne ce code ?',
+                code: 'console.log([1,2,3].map(x => x * 2).filter(x => x > 3));',
+                options: ['[2,4,6]', '[4,6]', '[2,4]', 'undefined'],
+                correct: 1,
+                explanation: 'map() transforme [1,2,3] en [2,4,6], puis filter() garde seulement les éléments > 3, donc [4,6].'
+            },
+            {
+                type: 'javascript',
+                difficulty: 'moyen',
+                question: 'Comment créer une fonction fléchée qui retourne un objet ?',
+                options: [
+                    'const fn = () => {name: "test"}',
+                    'const fn = () => ({name: "test"})',
+                    'const fn = () => return {name: "test"}',
+                    'const fn = () => object{name: "test"}'
+                ],
+                correct: 1,
+                explanation: 'Pour retourner un objet avec une arrow function, il faut l\'entourer de parenthèses : () => ({...}) pour éviter la confusion avec un bloc de code.'
+            },
+            {
+                type: 'javascript',
+                difficulty: 'difficile',
+                question: 'Qu\'est-ce que le "hoisting" en JavaScript ?',
+                options: [
+                    'L\'élévation des variables au début de leur portée',
+                    'La compression du code JavaScript',
+                    'L\'optimisation des performances',
+                    'La gestion des erreurs'
+                ],
+                correct: 0,
+                explanation: 'Le hoisting élève les déclarations de variables (var) et fonctions au début de leur portée, permettant leur utilisation avant leur déclaration dans le code.'
+            },
+
+            // SQL - Questions avancées
+            {
+                type: 'sql',
+                difficulty: 'difficile',
+                question: 'Que fait cette requête SQL ?',
+                code: 'SELECT name, ROW_NUMBER() OVER (ORDER BY salary DESC) as rang FROM employees;',
+                options: [
+                    'Trie par salaire décroissant',
+                    'Ajoute un numéro de ligne basé sur le tri par salaire décroissant',
+                    'Compte le nombre d\'employés',
+                    'Provoque une erreur'
+                ],
+                correct: 1,
+                explanation: 'ROW_NUMBER() OVER (ORDER BY salary DESC) attribue un numéro de ligne séquentiel à chaque employé, trié par salaire décroissant.'
+            },
+            {
+                type: 'sql',
+                difficulty: 'moyen',
+                question: 'Quelle est la différence entre DELETE et TRUNCATE ?',
+                options: [
+                    'Aucune différence',
+                    'DELETE peut avoir une clause WHERE, TRUNCATE supprime toute la table',
+                    'TRUNCATE est plus lent que DELETE',
+                    'DELETE supprime la structure, TRUNCATE les données'
+                ],
+                correct: 1,
+                explanation: 'DELETE peut supprimer des lignes spécifiques avec WHERE et peut être annulé. TRUNCATE supprime toutes les lignes plus rapidement mais ne peut pas être filtré.'
+            },
+            {
+                type: 'sql',
+                difficulty: 'difficile',
+                question: 'Que fait cette requête ?',
+                code: 'SELECT * FROM users u1 WHERE u1.salary > (SELECT AVG(salary) FROM users u2 WHERE u2.department = u1.department);',
+                options: [
+                    'Trouve les utilisateurs avec un salaire supérieur à la moyenne générale',
+                    'Trouve les utilisateurs avec un salaire supérieur à la moyenne de leur département',
+                    'Trouve tous les utilisateurs',
+                    'Provoque une erreur'
+                ],
+                correct: 1,
+                explanation: 'Cette requête corrélée trouve les employés dont le salaire est supérieur à la moyenne de leur propre département.'
+            },
+
+            // Algorithmique - Questions avancées
+            {
+                type: 'algo',
+                difficulty: 'difficile',
+                question: 'Quelle est la complexité de l\'algorithme de recherche binaire ?',
+                options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+                correct: 1,
+                explanation: 'La recherche binaire divise l\'espace de recherche par 2 à chaque étape, donnant une complexité logarithmique O(log n).'
+            },
+            {
+                type: 'algo',
+                difficulty: 'moyen',
+                question: 'Qu\'est-ce qu\'un algorithme "glouton" (greedy) ?',
+                options: [
+                    'Un algorithme qui utilise beaucoup de mémoire',
+                    'Un algorithme qui fait toujours le choix localement optimal',
+                    'Un algorithme très lent',
+                    'Un algorithme récursif'
+                ],
+                correct: 1,
+                explanation: 'Un algorithme glouton fait à chaque étape le choix qui semble le meilleur localement, espérant aboutir à un optimum global.'
+            },
+            {
+                type: 'algo',
+                difficulty: 'difficile',
+                question: 'Que calcule cet algorithme ?',
+                code: 'function algo(a, b) {\n  while (b !== 0) {\n    let temp = b;\n    b = a % b;\n    a = temp;\n  }\n  return a;\n}',
+                options: ['La somme de a et b', 'Le PGCD de a et b', 'Le PPCM de a et b', 'La division de a par b'],
+                correct: 1,
+                explanation: 'C\'est l\'algorithme d\'Euclide pour calculer le Plus Grand Commun Diviseur (PGCD) de deux nombres.'
+            },
+
+            // Questions pratiques et de mise en situation
+            {
+                type: 'html',
+                difficulty: 'moyen',
+                question: 'Comment rendre une image accessible aux lecteurs d\'écran ?',
+                code: '<img src="logo.png" ??? >',
+                options: ['title="Logo"', 'alt="Logo de l\'entreprise"', 'description="Logo"', 'accessible="true"'],
+                correct: 1,
+                explanation: 'L\'attribut alt fournit une description textuelle de l\'image pour les lecteurs d\'écran et quand l\'image ne peut pas être chargée.'
+            },
+            {
+                type: 'css',
+                difficulty: 'facile',
+                question: 'Comment masquer un élément tout en le gardant accessible aux lecteurs d\'écran ?',
+                options: [
+                    'display: none;',
+                    'visibility: hidden;',
+                    'position: absolute; left: -9999px;',
+                    'opacity: 0;'
+                ],
+                correct: 2,
+                explanation: 'position: absolute; left: -9999px; masque visuellement l\'élément mais le garde dans le DOM pour les technologies d\'assistance.'
+            },
+            {
+                type: 'javascript',
+                difficulty: 'moyen',
+                question: 'Comment éviter les erreurs lors de l\'accès à une propriété d\'objet ?',
+                code: 'const user = { name: "John" };\n// Accès sécurisé à user.address.street',
+                options: [
+                    'user.address.street',
+                    'user?.address?.street',
+                    'user.address && user.address.street',
+                    'try { user.address.street } catch {}'
+                ],
+                correct: 1,
+                explanation: 'L\'opérateur de chaînage optionnel (?.) permet d\'accéder en sécurité aux propriétés imbriquées sans erreur si une propriété est null/undefined.'
+            },
+            {
+                type: 'sql',
+                difficulty: 'moyen',
+                question: 'Comment éviter les injections SQL ?',
+                options: [
+                    'Utiliser des requêtes préparées (prepared statements)',
+                    'Chiffrer la base de données',
+                    'Utiliser HTTPS',
+                    'Limiter les permissions utilisateur seulement'
+                ],
+                correct: 0,
+                explanation: 'Les requêtes préparées séparent le code SQL des données, empêchant l\'injection de code malveillant dans les paramètres.'
+            },
+            {
+                type: 'algo',
+                difficulty: 'facile',
+                question: 'Quelle structure de données suit le principe FIFO ?',
+                options: ['Stack (Pile)', 'Queue (File)', 'Array (Tableau)', 'Hash Table'],
+                correct: 1,
+                explanation: 'FIFO = First In, First Out. La file (Queue) fonctionne ainsi : le premier élément ajouté est le premier à être retiré.'
+            },
+			{
+        type: 'html',
+        difficulty: 'facile',
+        question: 'Quelle balise HTML5 définit le contenu principal d\'une page ?',
+        options: ['<content>', '<main>', '<primary>', '<body>'],
+        correct: 1,
+        explanation: 'La balise <main> représente le contenu principal du document, unique par page et directement lié au sujet central.'
+		},
+		{
+			type: 'html',
+			difficulty: 'facile',
+			question: 'Comment créer un lien qui s\'ouvre dans un nouvel onglet ?',
+			code: '<a href="https://example.com" ???>Lien</a>',
+			options: ['target="_blank"', 'new-tab="true"', 'open="new"', 'window="new"'],
+			correct: 0,
+			explanation: 'L\'attribut target="_blank" ouvre le lien dans un nouvel onglet. Pour la sécurité, ajoutez rel="noopener noreferrer".'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Quelle balise HTML5 permet de créer une liste de suggestions pour un input ?',
+			options: ['<suggestions>', '<options>', '<datalist>', '<autocomplete>'],
+			correct: 2,
+			explanation: '<datalist> fournit une liste d\'options prédéfinies pour un élément <input>, créant un menu déroulant avec autocomplétion.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment intégrer une vidéo avec contrôles natifs en HTML5 ?',
+			code: '<??? src="video.mp4" ???>Votre navigateur ne supporte pas la vidéo.</???>',
+			options: ['video controls', 'movie controls', 'media controls', 'player controls'],
+			correct: 0,
+			explanation: '<video controls> active les contrôles natifs du navigateur (play, pause, volume, etc.). L\'attribut controls est booléen.'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Que fait l\'attribut contenteditable="true" ?',
+			options: [
+				'Rend le texte modifiable par l\'utilisateur',
+				'Active la correction orthographique',
+				'Permet le glisser-déposer',
+				'Active les raccourcis clavier'
+			],
+			correct: 0,
+			explanation: 'contenteditable="true" rend le contenu d\'un élément directement éditable par l\'utilisateur dans le navigateur, comme un éditeur de texte simple.'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Quelle est la différence entre <section> et <div> ?',
+			options: [
+				'Aucune différence technique',
+				'<section> a une valeur sémantique, <div> est générique',
+				'<div> est obsolète, <section> est moderne',
+				'<section> ne peut pas être stylé avec CSS'
+			],
+			correct: 1,
+			explanation: '<section> a une valeur sémantique (section thématique du contenu), tandis que <div> est un conteneur générique sans signification particulière.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment créer un champ de saisie numérique avec limites ?',
+			code: '<input type="number" ??? ??? step="1">',
+			options: ['min="0" max="100"', 'from="0" to="100"', 'start="0" end="100"', 'range="0-100"'],
+			correct: 0,
+			explanation: 'Les attributs min et max définissent les valeurs minimale et maximale. step définit l\'incrément lors de l\'utilisation des flèches.'
+		},
+		{
+			type: 'html',
+			difficulty: 'facile',
+			question: 'Quelle balise crée un titre de niveau 2 ?',
+			options: ['<h2>', '<title2>', '<head2>', '<header2>'],
+			correct: 0,
+			explanation: '<h2> crée un titre de niveau 2. Les titres vont de <h1> (le plus important) à <h6> (le moins important).'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment créer un bouton qui soumet un formulaire ?',
+			options: [
+				'<button type="submit">Envoyer</button>',
+				'<input type="submit" value="Envoyer">',
+				'<button>Envoyer</button>',
+				'Toutes les réponses'
+			],
+			correct: 3,
+			explanation: 'Les trois syntaxes fonctionnent. type="submit" est implicite pour <button>, et <input type="submit"> crée aussi un bouton de soumission.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment créer un lien vers une section de la même page ?',
+			code: '<a href="???">Aller à la section</a>',
+			options: ['#section', './section', 'section', '/section'],
+			correct: 0,
+			explanation: 'href="#section" crée un lien vers l\'élément ayant l\'id "section" dans la même page. C\'est appelé un lien d\'ancrage.'
+		},
+		{
+			type: 'html',
+			difficulty: 'facile',
+			question: 'Quelle balise crée une liste non ordonnée ?',
+			options: ['<ul>', '<ol>', '<list>', '<items>'],
+			correct: 0,
+			explanation: '<ul> (unordered list) crée une liste à puces. <ol> crée une liste numérotée (ordered list).'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment indiquer qu\'un champ de formulaire est obligatoire ?',
+			code: '<input type="text" name="nom" ???>',
+			options: ['required', 'mandatory="true"', 'obligatory', 'needed'],
+			correct: 0,
+			explanation: 'L\'attribut required (booléen) rend un champ obligatoire. Le navigateur empêchera la soumission si le champ est vide.'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Quelle est la différence entre <article> et <section> ?',
+			options: [
+				'<article> est pour du contenu autonome, <section> pour grouper thématiquement',
+				'Aucune différence',
+				'<section> est obsolète',
+				'<article> ne peut contenir de <section>'
+			],
+			correct: 0,
+			explanation: '<article> contient du contenu autonome et réutilisable (blog post, news). <section> groupe du contenu lié thématiquement.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment créer une case à cocher pré-cochée ?',
+			code: '<input type="checkbox" name="accept" ???>',
+			options: ['checked', 'selected', 'default="true"', 'value="true"'],
+			correct: 0,
+			explanation: 'L\'attribut checked (booléen) rend une case à cocher cochée par défaut au chargement de la page.'
+		},
+		{
+			type: 'html',
+			difficulty: 'facile',
+			question: 'Quelle balise crée un paragraphe ?',
+			options: ['<p>', '<paragraph>', '<text>', '<para>'],
+			correct: 0,
+			explanation: '<p> (paragraph) est la balise standard pour créer un paragraphe de texte en HTML.'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Comment optimiser le chargement d\'une image pour les performances ?',
+			code: '<img src="image.jpg" ??? ???>',
+			options: ['loading="lazy" decoding="async"', 'async defer', 'optimize="true"', 'performance="high"'],
+			correct: 0,
+			explanation: 'loading="lazy" charge l\'image quand elle devient visible. decoding="async" décode l\'image de manière asynchrone pour ne pas bloquer la page.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment créer un menu déroulant (select) ?',
+			code: '<select name="pays">\n  <option value="fr">France</option>\n  <option value="en" ???>Angleterre</option>\n</select>',
+			options: ['selected', 'chosen', 'default', 'active'],
+			correct: 0,
+			explanation: 'L\'attribut selected sur une <option> la rend sélectionnée par défaut dans le menu déroulant.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Quelle balise HTML5 définit les informations de contact ?',
+			options: ['<contact>', '<address>', '<info>', '<details>'],
+			correct: 1,
+			explanation: '<address> contient les informations de contact pour l\'article ou le document (email, adresse postale, etc.).'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Que fait l\'attribut role en HTML ?',
+			code: '<div role="button" tabindex="0">Cliquer</div>',
+			options: [
+				'Définit le rôle sémantique pour l\'accessibilité',
+				'Définit les permissions utilisateur',
+				'N\'a aucun effet',
+				'Définit le style CSS'
+			],
+			correct: 0,
+			explanation: 'L\'attribut role définit le rôle sémantique d\'un élément pour les technologies d\'assistance, améliorant l\'accessibilité.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment créer un champ de mot de passe ?',
+			code: '<input type="???" name="password">',
+			options: ['password', 'secret', 'hidden', 'private'],
+			correct: 0,
+			explanation: 'type="password" masque automatiquement la saisie avec des points ou astérisques pour la sécurité.'
+		},
+		{
+			type: 'html',
+			difficulty: 'facile',
+			question: 'Comment créer un lien vers un email ?',
+			code: '<a href="???">Nous contacter</a>',
+			options: ['mailto:contact@example.com', 'email:contact@example.com', 'mail:contact@example.com', 'send:contact@example.com'],
+			correct: 0,
+			explanation: 'mailto: suivi de l\'adresse email ouvre le client de messagerie par défaut avec l\'adresse pré-remplie.'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Comment inclure des métadonnées pour les réseaux sociaux ?',
+			code: '<meta property="???" content="Mon Super Article">',
+			options: ['og:title', 'social:title', 'meta:title', 'share:title'],
+			correct: 0,
+			explanation: 'Les métadonnées Open Graph (og:) sont utilisées par Facebook, LinkedIn, etc. pour afficher les aperçus de liens.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Quelle balise permet de grouper des options dans un select ?',
+			options: ['<group>', '<optgroup>', '<category>', '<section>'],
+			correct: 1,
+			explanation: '<optgroup label="Groupe"> permet de regrouper visuellement des options dans un menu déroulant avec un titre.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment créer un champ de téléchargement de fichier ?',
+			code: '<input type="???" name="upload">',
+			options: ['file', 'upload', 'attachment', 'document'],
+			correct: 0,
+			explanation: 'type="file" crée un champ de sélection de fichiers avec un bouton "Parcourir" pour choisir des fichiers locaux.'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Comment créer un formulaire qui ne valide pas automatiquement ?',
+			code: '<form ??? method="post">',
+			options: ['novalidate', 'validate="false"', 'no-validation', 'skip-validation'],
+			correct: 0,
+			explanation: 'L\'attribut novalidate désactive la validation HTML5 automatique, permettant une validation personnalisée en JavaScript.'
+		},
+		{
+			type: 'html',
+			difficulty: 'facile',
+			question: 'Quelle balise crée du texte en gras ?',
+			options: ['<bold>', '<b>', '<strong>', '<b> et <strong>'],
+			correct: 3,
+			explanation: '<b> crée du texte visuellement gras, <strong> indique une importance forte (sémantique + gras). Les deux fonctionnent.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment créer un bouton radio (choix unique) ?',
+			code: '<input type="radio" name="???" value="oui">',
+			options: ['question', 'choix', 'group', 'option'],
+			correct: 0,
+			explanation: 'Les boutons radio avec le même attribut name forment un groupe où un seul choix est possible. La value est envoyée au serveur.'
+		},
+		{
+			type: 'html',
+			difficulty: 'facile',
+			question: 'Comment créer un saut de ligne ?',
+			options: ['<br>', '<line>', '<break>', '<newline>'],
+			correct: 0,
+			explanation: '<br> (break) crée un saut de ligne. C\'est une balise auto-fermante qui ne nécessite pas de balise de fermeture.'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Comment définir la langue d\'une page pour l\'accessibilité ?',
+			code: '<html ??? >',
+			options: ['lang="fr"', 'language="fr"', 'locale="fr"', 'country="fr"'],
+			correct: 0,
+			explanation: 'L\'attribut lang sur <html> définit la langue principale du document, aidant les lecteurs d\'écran et les moteurs de recherche.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Quelle balise HTML5 permet de créer un contenu extensible ?',
+			options: ['<expand>', '<details>', '<accordion>', '<collapsible>'],
+			correct: 1,
+			explanation: '<details> avec <summary> crée un élément extensible natif (disclosure widget) que l\'utilisateur peut ouvrir/fermer.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment spécifier le charset d\'un document HTML ?',
+			code: '<meta ??? >',
+			options: ['charset="UTF-8"', 'encoding="UTF-8"', 'character-set="UTF-8"', 'format="UTF-8"'],
+			correct: 0,
+			explanation: '<meta charset="UTF-8"> définit l\'encodage des caractères du document. UTF-8 supporte tous les caractères Unicode.'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Comment créer un élément personnalisé réutilisable ?',
+			code: '<??? is="mon-composant">Contenu</???>',
+			options: ['div', 'custom', 'component', 'element'],
+			correct: 0,
+			explanation: 'Les Custom Elements utilisent des balises personnalisées ou l\'attribut is sur des éléments existants pour créer des composants réutilisables.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Quelle balise définit une citation courte en ligne ?',
+			options: ['<quote>', '<q>', '<cite>', '<citation>'],
+			correct: 1,
+			explanation: '<q> crée une citation courte en ligne avec des guillemets automatiques. <blockquote> est pour les citations longues en bloc.'
+		},
+		{
+			type: 'html',
+			difficulty: 'facile',
+			question: 'Comment créer un lien hypertexte ?',
+			code: '<??? href="page.html">Lien</???>',
+			options: ['a', 'link', 'href', 'url'],
+			correct: 0,
+			explanation: '<a href="URL"> crée un lien hypertexte. "a" signifie "anchor" (ancre) en référence aux liens d\'ancrage.'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Comment optimiser une page pour les moteurs de recherche ?',
+			code: '<meta name="???" content="Description de la page">',
+			options: ['description', 'summary', 'abstract', 'content'],
+			correct: 0,
+			explanation: '<meta name="description"> fournit un résumé de la page pour les moteurs de recherche, souvent affiché dans les résultats.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Comment créer un tableau avec en-têtes ?',
+			code: '<table>\n  <???>Nom</???>\n  <???>John</???>\n</table>',
+			options: ['th / td', 'header / cell', 'head / data', 'title / content'],
+			correct: 0,
+			explanation: '<th> crée une cellule d\'en-tête (table header), <td> une cellule de données (table data). <th> est automatiquement en gras et centré.'
+		},
+		{
+			type: 'html',
+			difficulty: 'difficile',
+			question: 'Comment implémenter la validation côté client avancée ?',
+			code: '<input type="text" pattern="???" title="Format : ABC-123">',
+			options: ['[A-Z]{3}-[0-9]{3}', '/[A-Z]{3}-[0-9]{3}/', 'ABC-123', 'regex:[A-Z]{3}-[0-9]{3}'],
+			correct: 0,
+			explanation: 'L\'attribut pattern utilise une regex pour valider le format de saisie. title fournit un message d\'aide à l\'utilisateur.'
+		},
+		{
+			type: 'html',
+			difficulty: 'moyen',
+			question: 'Quelle balise HTML5 représente une mesure scalaire ?',
+			options: ['<measure>', '<meter>', '<gauge>', '<progress>'],
+			correct: 1,
+			explanation: '<meter> représente une valeur scalaire dans une plage connue (jauge). <progress> est pour les barres de progression.'
+		},
+
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment changer la couleur de fond d\'un élément ?',
+			options: ['color: red;', 'background-color: red;', 'bg-color: red;', 'background: red;'],
+			correct: 3,
+			explanation: 'background-color: red; ou background: red; changent la couleur de fond. background est un raccourci qui peut inclure d\'autres propriétés.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment sélectionner tous les éléments <p> ?',
+			options: ['p { }', '.p { }', '#p { }', 'all p { }'],
+			correct: 0,
+			explanation: 'p sélectionne tous les éléments <p>. .classe sélectionne par classe, #id par identifiant.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Quelle propriété contrôle l\'espace entre les lettres ?',
+			options: ['word-spacing', 'letter-spacing', 'character-spacing', 'text-spacing'],
+			correct: 1,
+			explanation: 'letter-spacing contrôle l\'espacement entre les caractères. word-spacing contrôle l\'espacement entre les mots.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment créer une bordure arrondie ?',
+			code: '.element { ??? }',
+			options: ['border-radius: 10px;', 'border-round: 10px;', 'corner-radius: 10px;', 'round-border: 10px;'],
+			correct: 0,
+			explanation: 'border-radius crée des coins arrondis. Peut prendre 1 à 4 valeurs pour contrôler chaque coin indépendamment.'
+		},
+		{
+			type: 'css',
+			difficulty: 'difficile',
+			question: 'Quelle est la différence entre inline, block et inline-block ?',
+			options: [
+				'inline : largeur/hauteur, block : pas de saut de ligne, inline-block : les deux',
+				'block : saut de ligne + dimensions, inline : pas de dimensions, inline-block : dimensions sans saut',
+				'Aucune différence',
+				'block uniquement pour les divs'
+			],
+			correct: 1,
+			explanation: 'block prend toute la largeur avec saut de ligne. inline ne prend que l\'espace nécessaire sans dimensions. inline-block combine les deux.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment masquer un élément tout en gardant son espace ?',
+			options: ['display: none;', 'visibility: hidden;', 'opacity: 0;', 'display: hidden;'],
+			correct: 1,
+			explanation: 'visibility: hidden; masque l\'élément mais conserve son espace. display: none; le retire complètement du flux.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment aligner le texte au centre ?',
+			options: ['text-align: center;', 'align: center;', 'center-text: true;', 'horizontal-align: center;'],
+			correct: 0,
+			explanation: 'text-align: center; centre le texte horizontalement dans son conteneur.'
+		},
+		{
+			type: 'css',
+			difficulty: 'difficile',
+			question: 'Comment créer une animation CSS infinie ?',
+			code: '.rotate {\n  animation: spin 2s ??? ???;\n}\n@keyframes spin {\n  from { transform: rotate(0deg); }\n  to { transform: rotate(360deg); }\n}',
+			options: ['linear infinite', 'infinite linear', 'loop forever', 'repeat infinite'],
+			correct: 0,
+			explanation: 'animation: nom durée fonction-temps répétition; linear crée une animation constante, infinite la répète indéfiniment.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Quelle pseudo-classe sélectionne le premier enfant ?',
+			options: [':first', ':first-child', ':first-element', ':child(1)'],
+			correct: 1,
+			explanation: ':first-child sélectionne le premier élément enfant de son parent. :first-of-type sélectionne le premier d\'un type spécifique.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment créer un dégradé linéaire en arrière-plan ?',
+			code: '.gradient { background: ???; }',
+			options: ['linear-gradient(to right, red, blue)', 'gradient(red, blue)', 'color-gradient(red to blue)', 'background-gradient(red, blue)'],
+			correct: 0,
+			explanation: 'linear-gradient(direction, couleur1, couleur2, ...) crée un dégradé linéaire. La direction peut être un angle ou des mots-clés.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment définir la taille de police ?',
+			options: ['font-size: 16px;', 'text-size: 16px;', 'size: 16px;', 'font: 16px;'],
+			correct: 0,
+			explanation: 'font-size définit la taille de la police. Peut utiliser px, em, rem, %, ou des mots-clés comme large, small.'
+		},
+		{
+			type: 'css',
+			difficulty: 'difficile',
+			question: 'Comment créer une grille responsive avec auto-fit ?',
+			code: '.grid {\n  display: grid;\n  grid-template-columns: ???;\n}',
+			options: ['repeat(auto-fit, minmax(200px, 1fr))', 'auto-fit(200px)', 'repeat(auto, 200px)', 'minmax(auto-fit, 200px)'],
+			correct: 0,
+			explanation: 'repeat(auto-fit, minmax(min, max)) crée une grille responsive qui adapte automatiquement le nombre de colonnes selon l\'espace disponible.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Quelle propriété contrôle l\'ordre des éléments flex ?',
+			options: ['flex-order', 'order', 'flex-position', 'position'],
+			correct: 1,
+			explanation: 'La propriété order change l\'ordre d\'affichage des éléments flexibles sans modifier le HTML. Valeur par défaut : 0.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment créer une ombre portée ?',
+			code: '.shadow { ??? }',
+			options: ['box-shadow: 2px 2px 5px rgba(0,0,0,0.3);', 'shadow: 2px 2px 5px black;', 'drop-shadow: 2px 2px 5px;', 'element-shadow: 2px 2px 5px;'],
+			correct: 0,
+			explanation: 'box-shadow: offset-x offset-y blur spread color; crée une ombre. filter: drop-shadow() existe aussi pour les formes non-rectangulaires.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment retirer la décoration d\'un lien ?',
+			options: ['text-decoration: none;', 'link-decoration: none;', 'decoration: none;', 'underline: none;'],
+			correct: 0,
+			explanation: 'text-decoration: none; retire le soulignement des liens. Autres valeurs : underline, overline, line-through.'
+		},
+		{
+			type: 'css',
+			difficulty: 'difficile',
+			question: 'Comment utiliser les custom properties (variables CSS) ?',
+			code: ':root {\n  --main-color: #3498db;\n}\n.element {\n  color: ???;\n}',
+			options: ['var(--main-color)', '$main-color', '--main-color', 'custom(main-color)'],
+			correct: 0,
+			explanation: 'var(--nom-variable) utilise une custom property. Définie avec --nom: valeur; généralement dans :root pour une portée globale.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Quelle unité est relative à la largeur du viewport ?',
+			options: ['vw', 'vh', 'vm', 'vp'],
+			correct: 0,
+			explanation: 'vw (viewport width) : 1vw = 1% de la largeur du viewport. vh = hauteur, vmin = plus petite dimension, vmax = plus grande.'
+		},
+		{
+        type: 'sql',
+        difficulty: 'facile',
+        question: 'Comment sélectionner toutes les colonnes d\'une table ?',
+        code: 'SELECT ??? FROM users;',
+        options: ['ALL', '*', 'COLUMNS', 'EVERYTHING'],
+        correct: 1,
+        explanation: 'SELECT * sélectionne toutes les colonnes d\'une table. * est un caractère générique qui représente toutes les colonnes.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'facile',
+			question: 'Comment filtrer les résultats avec une condition ?',
+			code: 'SELECT name FROM users ??? age > 18;',
+			options: ['FILTER', 'IF', 'WHERE', 'CONDITION'],
+			correct: 2,
+			explanation: 'WHERE permet de filtrer les lignes selon une condition. C\'est la clause de base pour les conditions en SQL.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'facile',
+			question: 'Comment trier les résultats par ordre croissant ?',
+			code: 'SELECT * FROM products ORDER BY price ???;',
+			options: ['ASC', 'UP', 'ASCENDING', 'CRESCENT'],
+			correct: 0,
+			explanation: 'ORDER BY colonne ASC trie par ordre croissant. ASC est optionnel car c\'est le comportement par défaut.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment compter le nombre de lignes dans une table ?',
+			code: 'SELECT ???(*) FROM users;',
+			options: ['NUMBER', 'SIZE', 'COUNT', 'LENGTH'],
+			correct: 2,
+			explanation: 'COUNT(*) compte toutes les lignes. COUNT(colonne) compte les lignes non-NULL pour cette colonne.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment regrouper des résultats par une colonne ?',
+			code: 'SELECT department, COUNT(*) FROM employees ??? department;',
+			options: ['CLUSTER BY', 'PARTITION BY', 'SORT BY', 'GROUP BY'],
+			correct: 3,
+			explanation: 'GROUP BY regroupe les lignes ayant les mêmes valeurs dans les colonnes spécifiées, souvent utilisé avec des fonctions d\'agrégation.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Quelle fonction retourne la valeur maximale ?',
+			code: 'SELECT ???(salary) FROM employees;',
+			options: ['MAX', 'MAXIMUM', 'TOP', 'HIGHEST'],
+			correct: 0,
+			explanation: 'MAX(colonne) retourne la valeur maximale d\'une colonne. Autres fonctions : MIN, AVG, SUM.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'facile',
+			question: 'Comment insérer une nouvelle ligne ?',
+			code: '??? INTO users (name, email) VALUES (\'John\', \'john@test.com\');',
+			options: ['ADD', 'INSERT', 'CREATE', 'PUT'],
+			correct: 1,
+			explanation: 'INSERT INTO table (colonnes) VALUES (valeurs) ajoute une nouvelle ligne dans la table.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'facile',
+			question: 'Comment mettre à jour des données existantes ?',
+			code: '??? users SET age = 25 WHERE id = 1;',
+			options: ['MODIFY', 'CHANGE', 'ALTER', 'UPDATE'],
+			correct: 3,
+			explanation: 'UPDATE table SET colonne = valeur WHERE condition modifie les données existantes.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment joindre deux tables ?',
+			code: 'SELECT * FROM users u ??? orders o ON u.id = o.user_id;',
+			options: ['JOIN', 'LINK', 'CONNECT', 'MERGE'],
+			correct: 0,
+			explanation: 'JOIN (ou INNER JOIN) combine les lignes de deux tables basées sur une condition de relation.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Quelle est la différence entre INNER JOIN et LEFT JOIN ?',
+			options: [
+				'Aucune différence',
+				'INNER JOIN retourne seulement les correspondances, LEFT JOIN inclut toutes les lignes de gauche',
+				'LEFT JOIN est plus rapide',
+				'INNER JOIN est obsolète'
+			],
+			correct: 1,
+			explanation: 'INNER JOIN ne retourne que les lignes ayant des correspondances dans les deux tables. LEFT JOIN inclut toutes les lignes de la table de gauche.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Comment créer une vue (VIEW) ?',
+			code: '??? VIEW active_users AS SELECT * FROM users WHERE status = \'active\';',
+			options: ['MAKE', 'BUILD', 'CREATE', 'DEFINE'],
+			correct: 2,
+			explanation: 'CREATE VIEW crée une vue, qui est une requête stockée accessible comme une table virtuelle.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment limiter le nombre de résultats retournés ?',
+			code: 'SELECT * FROM products ORDER BY price ??? 10;',
+			options: ['TOP', 'MAX', 'FIRST', 'LIMIT'],
+			correct: 3,
+			explanation: 'LIMIT n restreint le nombre de lignes retournées. SQL Server utilise TOP n.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment rechercher avec un motif partiel ?',
+			code: 'SELECT * FROM users WHERE name ??? \'John%\';',
+			options: ['LIKE', 'MATCH', 'CONTAINS', 'SEARCH'],
+			correct: 0,
+			explanation: 'LIKE permet la recherche avec des motifs. % représente zéro ou plusieurs caractères, _ représente un seul caractère.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Que fait cette requête avec HAVING ?',
+			code: 'SELECT department, AVG(salary) FROM employees GROUP BY department HAVING AVG(salary) > 50000;',
+			options: [
+				'Filtre avant le regroupement',
+				'Filtre après le regroupement sur les résultats agrégés',
+				'Équivalent à WHERE',
+				'Provoque une erreur'
+			],
+			correct: 1,
+			explanation: 'HAVING filtre les groupes après GROUP BY, contrairement à WHERE qui filtre avant le regroupement.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment vérifier si une valeur est dans une liste ?',
+			code: 'SELECT * FROM users WHERE status ??? (\'active\', \'pending\');',
+			options: ['CONTAINS', 'INCLUDES', 'IN', 'AMONG'],
+			correct: 2,
+			explanation: 'IN (liste) vérifie si la valeur correspond à l\'un des éléments de la liste fournie.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment gérer les valeurs NULL ?',
+			code: 'SELECT * FROM users WHERE email ??? NULL;',
+			options: ['!=', '<>', 'NOT EQUALS', 'IS NOT'],
+			correct: 3,
+			explanation: 'IS NULL et IS NOT NULL sont utilisés pour tester les valeurs NULL. Les opérateurs de comparaison normaux ne fonctionnent pas avec NULL.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Comment créer un index pour améliorer les performances ?',
+			code: '??? INDEX idx_email ON users(email);',
+			options: ['CREATE', 'ADD', 'BUILD', 'MAKE'],
+			correct: 0,
+			explanation: 'CREATE INDEX crée un index sur une ou plusieurs colonnes pour accélérer les requêtes de recherche.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment calculer la moyenne d\'une colonne ?',
+			code: 'SELECT ???(price) FROM products;',
+			options: ['AVERAGE', 'AVG', 'MEAN', 'MID'],
+			correct: 1,
+			explanation: 'AVG(colonne) calcule la moyenne arithmétique des valeurs non-NULL d\'une colonne.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Que fait cette sous-requête ?',
+			code: 'SELECT name FROM users WHERE id IN (SELECT user_id FROM orders WHERE total > 1000);',
+			options: [
+				'Trouve les utilisateurs ayant des commandes > 1000€',
+				'Trouve toutes les commandes > 1000€',
+				'Provoque une erreur',
+				'Trouve les utilisateurs sans commandes'
+			],
+			correct: 0,
+			explanation: 'Cette sous-requête trouve d\'abord les user_id des grosses commandes, puis sélectionne les noms des utilisateurs correspondants.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment concatener deux colonnes ?',
+			code: 'SELECT ??? AS full_name FROM users;',
+			options: ['first_name + last_name', 'JOIN(first_name, last_name)', 'CONCAT(first_name, \' \', last_name)', 'MERGE(first_name, last_name)'],
+			correct: 2,
+			explanation: 'CONCAT() joint plusieurs chaînes. Certains SGBD acceptent aussi l\'opérateur || ou +.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Comment créer une contrainte de clé étrangère ?',
+			code: 'ALTER TABLE orders ADD CONSTRAINT fk_user FOREIGN KEY (user_id) ??? users(id);',
+			options: ['POINTS TO', 'LINKS TO', 'CONNECTS TO', 'REFERENCES'],
+			correct: 3,
+			explanation: 'REFERENCES table(colonne) établit une relation de clé étrangère, garantissant l\'intégrité référentielle.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment arrondir un nombre à 2 décimales ?',
+			code: 'SELECT ???(price, 2) FROM products;',
+			options: ['ROUND', 'DECIMAL', 'PRECISION', 'FORMAT'],
+			correct: 0,
+			explanation: 'ROUND(nombre, décimales) arrondit un nombre au nombre de décimales spécifié.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Que fait COALESCE ?',
+			code: 'SELECT COALESCE(phone, email, \'No contact\') FROM users;',
+			options: [
+				'Combine toutes les valeurs',
+				'Retourne la première valeur non-NULL',
+				'Compte les valeurs NULL',
+				'Provoque une erreur'
+			],
+			correct: 1,
+			explanation: 'COALESCE retourne la première valeur non-NULL de la liste, utile pour gérer les valeurs manquantes.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment extraire l\'année d\'une date ?',
+			code: 'SELECT ???(created_date) FROM orders;',
+			options: ['EXTRACT_YEAR', 'GET_YEAR', 'YEAR', 'DATE_YEAR'],
+			correct: 2,
+			explanation: 'YEAR(date) extrait l\'année. Autres fonctions similaires : MONTH(), DAY(), ou EXTRACT(YEAR FROM date).'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Comment créer une transaction ?',
+			code: '??? TRANSACTION;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\n???;',
+			options: ['START / END', 'OPEN / CLOSE', 'INIT / FINISH', 'BEGIN / COMMIT'],
+			correct: 3,
+			explanation: 'BEGIN TRANSACTION démarre une transaction, COMMIT la valide, ROLLBACK l\'annule. Garantit la cohérence des données.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment créer un alias pour une table ?',
+			code: 'SELECT u.name FROM users ??? u;',
+			options: ['AS', 'ALIAS', 'NAMED', 'CALLED'],
+			correct: 0,
+			explanation: 'AS crée un alias (raccourci) pour une table ou colonne. AS est optionnel : "users u" fonctionne aussi.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'facile',
+			question: 'Comment supprimer des données ?',
+			code: '??? FROM users WHERE age < 18;',
+			options: ['REMOVE', 'DELETE', 'DROP', 'CLEAR'],
+			correct: 1,
+			explanation: 'DELETE FROM table WHERE condition supprime les lignes correspondant à la condition.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Que fait cette requête avec EXISTS ?',
+			code: 'SELECT * FROM users u WHERE EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id);',
+			options: [
+				'Trouve tous les utilisateurs',
+				'Trouve les commandes existantes',
+				'Trouve les utilisateurs ayant au moins une commande',
+				'Provoque une erreur'
+			],
+			correct: 2,
+			explanation: 'EXISTS vérifie si la sous-requête retourne au moins une ligne, ici pour trouver les utilisateurs avec des commandes.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment éviter les doublons dans les résultats ?',
+			code: 'SELECT ??? city FROM users;',
+			options: ['UNIQUE', 'SINGLE', 'DIFFERENT', 'DISTINCT'],
+			correct: 3,
+			explanation: 'DISTINCT élimine les doublons des résultats, ne retournant que les valeurs uniques.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Comment utiliser CASE pour des conditions multiples ?',
+			code: 'SELECT name, CASE WHEN age < 18 THEN \'Minor\' WHEN age >= 65 THEN \'Senior\' ??? \'Adult\' END FROM users;',
+			options: ['ELSE', 'DEFAULT', 'OTHERWISE', 'FINALLY'],
+			correct: 0,
+			explanation: 'CASE WHEN condition THEN result ELSE default END permet des conditions multiples, comme un switch en programmation.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment obtenir la date actuelle ?',
+			code: 'SELECT ??? AS today;',
+			options: ['TODAY()', 'NOW()', 'CURRENT_DATE', 'GET_DATE()'],
+			correct: 1,
+			explanation: 'NOW() retourne date et heure actuelles. CURRENT_DATE donne seulement la date. Varie selon le SGBD.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Comment créer une procédure stockée ?',
+			code: '??? PROCEDURE GetUserOrders(IN user_id INT)\nBEGIN\n  SELECT * FROM orders WHERE user_id = user_id;\nEND;',
+			options: ['DEFINE', 'MAKE', 'BUILD', 'CREATE'],
+			correct: 3,
+			explanation: 'CREATE PROCEDURE crée une procédure stockée, un ensemble d\'instructions SQL réutilisable avec des paramètres.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment convertir du texte en majuscules ?',
+			code: 'SELECT ???(name) FROM users;',
+			options: ['UPPERCASE', 'CAPS', 'UPPER', 'UCASE'],
+			correct: 2,
+			explanation: 'UPPER(texte) convertit en majuscules, LOWER(texte) convertit en minuscules.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Que fait cette requête window function ?',
+			code: 'SELECT name, salary, RANK() OVER (ORDER BY salary DESC) as salary_rank FROM employees;',
+			options: [
+				'Trie simplement par salaire',
+				'Compte les employés',
+				'Provoque une erreur',
+				'Classe les employés par salaire avec gestion des ex-aequo'
+			],
+			correct: 3,
+			explanation: 'RANK() OVER attribue un rang avec des égalités possibles (1,2,2,4...). ROW_NUMBER() donne des rangs uniques.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment calculer la longueur d\'une chaîne ?',
+			code: 'SELECT ???(name) FROM users;',
+			options: ['SIZE', 'LEN', 'COUNT', 'LENGTH'],
+			correct: 3,
+			explanation: 'LENGTH(chaîne) retourne le nombre de caractères. Certains SGBD utilisent LEN().'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Comment créer une table temporaire ?',
+			code: '??? TEMPORARY TABLE temp_stats AS SELECT department, AVG(salary) as avg_salary FROM employees GROUP BY department;',
+			options: ['MAKE', 'CREATE', 'BUILD', 'DEFINE'],
+			correct: 1,
+			explanation: 'CREATE TEMPORARY TABLE crée une table temporaire qui existe seulement pendant la session courante.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment remplacer des valeurs NULL par une valeur par défaut ?',
+			code: 'SELECT ???(phone, \'No phone\') FROM users;',
+			options: ['COALESCE', 'REPLACE', 'DEFAULT', 'SUBSTITUTE'],
+			correct: 0,
+			explanation: 'COALESCE(valeur, défaut) remplace NULL par la valeur par défaut. ISNULL() ou IFNULL() selon le SGBD.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Comment optimiser une requête lente ?',
+			options: [
+				'Ajouter plus de RAM',
+				'Créer des index sur les colonnes utilisées dans WHERE et JOIN',
+				'Augmenter le timeout',
+				'Redémarrer la base de données'
+			],
+			correct: 1,
+			explanation: 'Les index sur les colonnes fréquemment utilisées dans WHERE, JOIN, et ORDER BY sont la première optimisation à considérer.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'moyen',
+			question: 'Comment paginer les résultats ?',
+			code: 'SELECT * FROM products ORDER BY id LIMIT 10 ???;',
+			options: ['START 20', 'SKIP 20', 'FROM 20', 'OFFSET 20'],
+			correct: 3,
+			explanation: 'LIMIT n OFFSET m retourne n résultats en ignorant les m premiers. Essentiel pour la pagination web.'
+		},
+		{
+			type: 'sql',
+			difficulty: 'difficile',
+			question: 'Que fait cette requête récursive CTE ?',
+			code: 'WITH RECURSIVE tree AS (\n  SELECT id, name, parent_id, 1 as level FROM categories WHERE parent_id IS NULL\n  UNION ALL\n  SELECT c.id, c.name, c.parent_id, t.level + 1 FROM categories c JOIN tree t ON c.parent_id = t.id\n)\nSELECT * FROM tree;',
+			options: [
+				'Crée une boucle infinie',
+				'Traverse une hiérarchie d\'arbre avec les niveaux',
+				'Duplique les données',
+				'Provoque une erreur'
+			],
+			correct: 1,
+			explanation: 'Cette CTE récursive traverse une structure hiérarchique (arbre) en calculant le niveau de profondeur de chaque nœud.'
+		},
+
+		// ========== 20 QUESTIONS ALGORITHMIQUE ==========
+		{
+			type: 'algo',
+			difficulty: 'facile',
+			question: 'Quelle est la complexité temporelle d\'un accès direct dans un tableau ?',
+			options: ['O(n)', 'O(log n)', 'O(n²)', 'O(1)'],
+			correct: 3,
+			explanation: 'L\'accès direct à un élément par son index dans un tableau est en temps constant O(1), indépendamment de la taille du tableau.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'moyen',
+			question: 'Quel algorithme de tri a la meilleure complexité en moyenne ?',
+			options: ['Quick Sort O(n log n)', 'Bubble Sort O(n²)', 'Selection Sort O(n²)', 'Insertion Sort O(n²)'],
+			correct: 0,
+			explanation: 'Quick Sort a une complexité moyenne de O(n log n), bien plus efficace que les algorithmes simples en O(n²).'
+		},
+		{
+			type: 'algo',
+			difficulty: 'facile',
+			question: 'Qu\'est-ce qu\'une pile (stack) ?',
+			options: [
+				'Une structure FIFO (First In, First Out)',
+				'Une structure LIFO (Last In, First Out)',
+				'Un type de tableau',
+				'Une liste triée'
+			],
+			correct: 1,
+			explanation: 'Une pile suit le principe LIFO : le dernier élément ajouté est le premier à être retiré, comme une pile d\'assiettes.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'moyen',
+			question: 'Que calcule cet algorithme récursif ?',
+			code: 'function mystery(n) {\n  if (n <= 1) return 1;\n  return n * mystery(n - 1);\n}',
+			options: ['La somme de 1 à n', 'La puissance de n', 'La factorielle de n', 'La racine de n'],
+			correct: 2,
+			explanation: 'C\'est l\'algorithme récursif pour calculer la factorielle : n! = n × (n-1) × (n-2) × ... × 1'
+		},
+		{
+			type: 'algo',
+			difficulty: 'difficile',
+			question: 'Quelle est la différence entre BFS et DFS ?',
+			options: [
+				'BFS est plus rapide que DFS',
+				'DFS utilise plus de mémoire',
+				'Aucune différence pratique',
+				'BFS explore en largeur, DFS en profondeur'
+			],
+			correct: 3,
+			explanation: 'BFS (Breadth-First Search) explore niveau par niveau, DFS (Depth-First Search) va au plus profond avant de reculer.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'moyen',
+			question: 'Qu\'est-ce qu\'une table de hachage (hash table) ?',
+			options: [
+				'Une structure qui associe clés et valeurs via une fonction de hachage',
+				'Un tableau trié',
+				'Une liste chaînée',
+				'Un arbre binaire'
+			],
+			correct: 0,
+			explanation: 'Une table de hachage utilise une fonction de hachage pour mapper des clés vers des positions, permettant un accès rapide O(1) en moyenne.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'facile',
+			question: 'Que fait l\'algorithme de tri à bulles (bubble sort) ?',
+			options: [
+				'Divise le tableau en deux parties',
+				'Compare et échange les éléments adjacents répétitivement',
+				'Trouve le minimum et le place au début',
+				'Utilise un pivot pour partitionner'
+			],
+			correct: 1,
+			explanation: 'Bubble sort compare chaque paire d\'éléments adjacents et les échange s\'ils sont dans le mauvais ordre, répétant jusqu\'à ce que le tableau soit trié.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'difficile',
+			question: 'Qu\'est-ce que la programmation dynamique ?',
+			options: [
+				'La programmation orientée objet',
+				'L\'allocation dynamique de mémoire',
+				'Une technique qui résout des problèmes en les décomposant en sous-problèmes',
+				'Les algorithmes récursifs simples'
+			],
+			correct: 2,
+			explanation: 'La programmation dynamique résout des problèmes complexes en les décomposant en sous-problèmes plus simples et en mémorisant les résultats.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'moyen',
+			question: 'Quelle structure de données est idéale pour un système d\'annulation (undo) ?',
+			options: ['Stack (pile)', 'Queue (file)', 'Array (tableau)', 'Hash Table'],
+			correct: 0,
+			explanation: 'Une pile permet de stocker les actions et de les annuler dans l\'ordre inverse (LIFO), parfait pour un système d\'undo.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'difficile',
+			question: 'Que fait l\'algorithme de Dijkstra ?',
+			options: [
+				'Trie un tableau',
+				'Trouve le plus court chemin dans un graphe pondéré',
+				'Recherche dans un arbre binaire',
+				'Calcule des probabilités'
+			],
+			correct: 1,
+			explanation: 'L\'algorithme de Dijkstra trouve le plus court chemin entre un nœud source et tous les autres nœuds dans un graphe à poids positifs.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'moyen',
+			question: 'Qu\'est-ce qu\'un arbre binaire de recherche ?',
+			options: [
+				'Un arbre où chaque nœud a exactement 2 enfants',
+				'Un arbre équilibré automatiquement',
+				'Un arbre où les valeurs sont triées : gauche < parent < droite',
+				'Un graphe sans cycles'
+			],
+			correct: 2,
+			explanation: 'Dans un arbre binaire de recherche, pour chaque nœud, tous les éléments du sous-arbre gauche sont inférieurs et ceux de droite supérieurs.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'facile',
+			question: 'Quelle est la complexité de la recherche linéaire ?',
+			options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)'],
+			correct: 1,
+			explanation: 'La recherche linéaire parcourt tous les éléments un par un jusqu\'à trouver la cible, donnant une complexité O(n).'
+		},
+		{
+			type: 'algo',
+			difficulty: 'difficile',
+			question: 'Que résout le problème du sac à dos (knapsack) ?',
+			options: [
+				'Optimiser l\'espace de stockage',
+				'Trier des objets par poids',
+				'Sélectionner des objets pour maximiser la valeur sous contrainte de poids',
+				'Calculer le volume d\'un sac'
+			],
+			correct: 2,
+			explanation: 'Le problème du sac à dos consiste à sélectionner des objets ayant chacun un poids et une valeur pour maximiser la valeur totale sans dépasser la capacité.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'moyen',
+			question: 'Comment fonctionne l\'algorithme de tri fusion (merge sort) ?',
+			options: [
+				'Trouve le minimum et l\'échange avec le premier élément',
+				'Divise le tableau en deux, trie chaque moitié, puis fusionne',
+				'Compare les éléments adjacents et les échange',
+				'Utilise un pivot pour partitionner le tableau'
+			],
+			correct: 1,
+			explanation: 'Merge sort utilise la stratégie "diviser pour régner" : divise récursivement puis fusionne les parties triées.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'facile',
+			question: 'Qu\'est-ce qu\'une liste chaînée ?',
+			options: [
+				'Un tableau dynamique',
+				'Une pile organisée',
+				'Un arbre linéaire',
+				'Une structure où chaque élément pointe vers le suivant'
+			],
+			correct: 3,
+			explanation: 'Une liste chaînée est une séquence d\'éléments (nœuds) où chaque nœud contient une donnée et un pointeur vers le nœud suivant.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'difficile',
+			question: 'Qu\'est-ce que la notation Big O mesure ?',
+			options: [
+				'Le temps d\'exécution exact',
+				'La complexité dans le pire cas en fonction de la taille des données',
+				'La mémoire utilisée',
+				'Le nombre de lignes de code'
+			],
+			correct: 1,
+			explanation: 'La notation Big O décrit la complexité algorithmique dans le pire des cas, montrant comment le temps d\'exécution évolue avec la taille de l\'entrée.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'moyen',
+			question: 'Quelle structure utilise-t-on pour un parcours en largeur (BFS) ?',
+			options: ['Stack (pile)', 'Array (tableau)', 'Hash Table', 'Queue (file)'],
+			correct: 3,
+			explanation: 'BFS utilise une queue (FIFO) pour explorer les nœuds niveau par niveau. DFS utilise une stack (LIFO).'
+		},
+		{
+			type: 'algo',
+			difficulty: 'difficile',
+			question: 'Que fait cet algorithme de backtracking ?',
+			code: 'function solve(board, row) {\n  if (row === 8) return true;\n  for (col = 0; col < 8; col++) {\n    if (isSafe(board, row, col)) {\n      board[row][col] = 1;\n      if (solve(board, row + 1)) return true;\n      board[row][col] = 0;\n    }\n  }\n  return false;\n}',
+			options: [
+				'Parcourt un labyrinthe',
+				'Résout le problème des 8 dames',
+				'Trie un tableau',
+				'Calcule des permutations'
+			],
+			correct: 1,
+			explanation: 'Cet algorithme de backtracking résout le problème des 8 dames : placer 8 dames sur un échiquier sans qu\'elles se menacent.'
+		},
+		{
+			type: 'algo',
+			difficulty: 'moyen',
+			question: 'Quelle est la différence principale entre un graphe et un arbre ?',
+			options: [
+				'Un arbre est plus rapide',
+				'Un arbre est un graphe connexe sans cycles',
+				'Un graphe ne peut pas avoir de nœuds',
+				'Aucune différence'
+			],
+			correct: 1,
+			explanation: 'Un arbre est un cas particulier de graphe : il est connexe (tous les nœuds sont reliés) et acyclique (sans cycles).'
+		},
+		{
+			type: 'algo',
+			difficulty: 'difficile',
+			question: 'Que calcule la suite de Fibonacci avec mémoïsation ?',
+			code: 'const memo = {};\nfunction fib(n) {\n  if (n in memo) return memo[n];\n  if (n <= 1) return n;\n  memo[n] = fib(n-1) + fib(n-2);\n  return memo[n];\n}',
+			options: [
+				'Rend l\'algorithme plus lent',
+				'Ne change rien à la complexité',
+				'Améliore la complexité de O(2^n) à O(n)',
+				'Provoque une erreur de mémoire'
+			],
+			correct: 2,
+			explanation: 'La mémoïsation stocke les résultats déjà calculés, évitant les recalculs redondants et améliorant drastiquement la performance.'
+		},
+
+		// ========== 40 QUESTIONS JAVASCRIPT (incluant 10 sur async/await et promesses) ==========
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment déclarer une variable qui peut être modifiée ?',
+			options: ['var name = "John";', 'const name = "John";', 'let et var', 'let name = "John";'],
+			correct: 2,
+			explanation: 'let et var permettent de modifier la valeur. const crée une constante. let est préféré pour son scope de bloc.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment créer un tableau en JavaScript ?',
+			options: ['array = [1,2,3];', 'Toutes les réponses', 'array = new Array(1,2,3);', 'array = Array(1,2,3);'],
+			correct: 1,
+			explanation: 'Toutes ces syntaxes créent un tableau. La notation littérale [1,2,3] est la plus courante et recommandée.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que retourne cette expression ?',
+			code: 'console.log(typeof null);',
+			options: ['"null"', '"undefined"', '"object"', '"boolean"'],
+			correct: 2,
+			explanation: 'typeof null retourne "object" - c\'est un bug historique de JavaScript qui est conservé pour la compatibilité.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment ajouter un élément à la fin d\'un tableau ?',
+			code: 'let arr = [1,2,3];\narr.???(4);',
+			options: ['push', 'add', 'append', 'insert'],
+			correct: 0,
+			explanation: 'push() ajoute un ou plusieurs éléments à la fin du tableau et retourne la nouvelle longueur.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Que fait cette fonction ?',
+			code: 'function debounce(func, delay) {\n  let timeoutId;\n  return function(...args) {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => func.apply(this, args), delay);\n  };\n}',
+			options: [
+				'Exécute immédiatement la fonction',
+				'Répète la fonction en boucle',
+				'Retarde l\'exécution et annule les appels précédents',
+				'Provoque une erreur'
+			],
+			correct: 2,
+			explanation: 'Debounce retarde l\'exécution d\'une fonction et annule les appels précédents, utile pour les événements fréquents comme le scroll.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment vérifier si une variable est un tableau ?',
+			code: 'let data = [1,2,3];\nconsole.log(???(data));',
+			options: ['typeof data === "array"', 'B et C sont correctes', 'Array.isArray(data)', 'data instanceof Array'],
+			correct: 1,
+			explanation: 'Array.isArray() est la méthode recommandée. instanceof Array fonctionne aussi mais peut échouer avec différents contextes.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que fait la méthode map() ?',
+			code: 'let numbers = [1,2,3];\nlet doubled = numbers.map(x => x * 2);',
+			options: [
+				'Modifie le tableau original',
+				'Filtre les éléments',
+				'Crée un nouveau tableau en transformant chaque élément',
+				'Trie le tableau'
+			],
+			correct: 2,
+			explanation: 'map() crée un nouveau tableau en appliquant une fonction à chaque élément, sans modifier l\'original.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Qu\'est-ce que la fermeture (closure) ?',
+			code: 'function outer() {\n  let x = 10;\n  return function inner() {\n    console.log(x);\n  };\n}\nlet fn = outer();\nfn(); // Que se passe-t-il ?',
+			options: [
+				'Erreur - x n\'est plus accessible',
+				'Affiche undefined',
+				'Ne s\'exécute pas',
+				'Affiche 10 - inner garde l\'accès à x'
+			],
+			correct: 3,
+			explanation: 'Une closure permet à une fonction interne d\'accéder aux variables de sa fonction parent, même après que parent ait terminé.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment copier un objet superficiellement ?',
+			code: 'let original = {a: 1, b: 2};\nlet copy = ???;',
+			options: ['{...original}', 'original.clone()', 'Object.assign({}, original)', 'Les deux A et C fonctionnent'],
+			correct: 3,
+			explanation: 'Le spread operator {...obj} et Object.assign({}, obj) créent tous deux une copie superficielle d\'un objet.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment convertir une chaîne en nombre ?',
+			options: ['Number("123")', 'Toutes les réponses', 'parseInt("123")', 'parseFloat("123.45")'],
+			correct: 1,
+			explanation: 'Number() convertit complètement, parseInt() pour les entiers, parseFloat() pour les décimales. + peut aussi être utilisé.'
+		},
+
+		// ========== 10 QUESTIONS SUR PROMESSES/ASYNC-AWAIT ==========
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment créer une Promise qui se résout après 2 secondes ?',
+			code: 'const delay = () => new Promise(resolve => {\n  ???\n});',
+			options: ['setTimeout(resolve, 2000)', 'setInterval(resolve, 2000)', 'resolve(2000)', 'wait(2000)'],
+			correct: 0,
+			explanation: 'setTimeout(resolve, 2000) exécute resolve après 2000ms, résolvant la Promise.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que fait async/await ?',
+			options: [
+				'Rend le code asynchrone plus difficile à lire',
+				'Remplace complètement les Promises',
+				'Améliore les performances',
+				'Permet d\'écrire du code asynchrone qui ressemble au code synchrone'
+			],
+			correct: 3,
+			explanation: 'async/await est du sucre syntaxique qui permet d\'écrire du code asynchrone de manière plus lisible, basé sur les Promises.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Que fait ce code avec Promise.all ?',
+			code: 'const promises = [fetch("/api/1"), fetch("/api/2"), fetch("/api/3")];\nPromise.all(promises).then(results => console.log(results));',
+			options: [
+				'Exécute les requêtes séquentiellement',
+				'Exécute seulement la première requête',
+				'Exécute toutes les requêtes en parallèle et attend que toutes se terminent',
+				'Provoque une erreur'
+			],
+			correct: 2,
+			explanation: 'Promise.all exécute toutes les Promises en parallèle et se résout quand toutes sont résolues, ou se rejette si une seule échoue.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment gérer les erreurs avec async/await ?',
+			code: 'async function fetchData() {\n  ???\n    const data = await fetch("/api/data");\n    return data;\n  ??? (error) {\n    console.log("Erreur:", error);\n  }\n}',
+			options: ['if/else', 'when/error', 'try/catch', 'attempt/fail'],
+			correct: 2,
+			explanation: 'try/catch est utilisé pour gérer les erreurs avec async/await, comme pour le code synchrone.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Quelle est la différence entre Promise.all et Promise.allSettled ?',
+			options: [
+				'Aucune différence',
+				'allSettled est plus rapide',
+				'Promise.all est obsolète',
+				'Promise.all échoue si une Promise échoue, allSettled attend toutes les Promises'
+			],
+			correct: 3,
+			explanation: 'Promise.all se rejette dès qu\'une Promise échoue. Promise.allSettled attend que toutes se terminent (réussies ou échouées).'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment transformer une fonction callback en Promise ?',
+			code: 'function delay(ms, callback) { setTimeout(callback, ms); }\n// Transformer en Promise',
+			options: [
+				'const delayPromise = (ms) => new Promise(resolve => delay(ms, resolve));',
+				'const delayPromise = util.promisify(delay);',
+				'Les deux méthodes fonctionnent',
+				'Impossible à faire'
+			],
+			correct: 0,
+			explanation: 'On encapsule la fonction callback dans une nouvelle Promise, en appelant resolve dans le callback.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Que fait ce code avec Promise.race ?',
+			code: 'const timeout = new Promise((_, reject) => \n  setTimeout(() => reject(new Error("Timeout")), 5000)\n);\nconst fetchData = fetch("/slow-api");\nPromise.race([fetchData, timeout]).then(result => console.log(result));',
+			options: [
+				'Attend les deux Promises',
+				'Prend seulement le timeout',
+				'Prend le résultat de la première Promise qui se termine (succès ou échec)',
+				'Provoque toujours une erreur'
+			],
+			correct: 2,
+			explanation: 'Promise.race retourne le résultat de la première Promise qui se termine, créant ici un mécanisme de timeout.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Peut-on utiliser await dans une fonction normale ?',
+			code: 'function normalFunction() {\n  const data = await fetch("/api");\n  return data;\n}',
+			options: [
+				'Oui, await fonctionne partout',
+				'Seulement dans les classes',
+				'Non, await ne peut être utilisé que dans une fonction async',
+				'Seulement avec des callbacks'
+			],
+			correct: 2,
+			explanation: 'await ne peut être utilisé qu\'à l\'intérieur de fonctions marquées async. Sinon, on obtient une erreur de syntaxe.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Que retourne une fonction async sans return explicite ?',
+			code: 'async function test() {\n  console.log("Hello");\n}\nconst result = test();',
+			options: ['undefined', '"Hello"', 'null', 'Promise<undefined>'],
+			correct: 3,
+			explanation: 'Une fonction async retourne toujours une Promise. Sans return explicite, elle retourne Promise.resolve(undefined).'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment exécuter des Promises en séquence (une après l\'autre) ?',
+			code: 'const urls = ["/api/1", "/api/2", "/api/3"];\n// Exécuter fetch() sur chaque URL séquentiellement',
+			options: [
+				'Promise.all(urls.map(url => fetch(url)))',
+				'urls.forEach(async url => await fetch(url))',
+				'for (const url of urls) { await fetch(url); }',
+				'Promise.sequence(urls.map(url => fetch(url)))'
+			],
+			correct: 2,
+			explanation: 'Une boucle for...of avec await exécute les Promises séquentiellement. Promise.all les exécute en parallèle.'
+		},
+
+		// ========== 30 QUESTIONS JAVASCRIPT SUPPLÉMENTAIRES ==========
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment accéder au dernier élément d\'un tableau ?',
+			code: 'let arr = [1,2,3,4,5];\nlet last = arr[???];',
+			options: ['arr.length', '-1', 'arr.last', 'arr.length - 1'],
+			correct: 3,
+			explanation: 'arr[arr.length - 1] accède au dernier élément. Les indices commencent à 0, donc le dernier est à position length-1.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que fait la méthode filter() ?',
+			code: 'let numbers = [1,2,3,4,5];\nlet evens = numbers.filter(n => n % 2 === 0);',
+			options: [
+				'Modifie le tableau original',
+				'Trie le tableau',
+				'Crée un nouveau tableau avec les éléments qui passent le test',
+				'Compte les éléments'
+			],
+			correct: 2,
+			explanation: 'filter() crée un nouveau tableau contenant seulement les éléments pour lesquels la fonction de test retourne true.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Qu\'est-ce que l\'event bubbling ?',
+			options: [
+				'Une erreur JavaScript',
+				'L\'animation d\'éléments',
+				'La gestion de la mémoire',
+				'La propagation d\'un événement du enfant vers le parent'
+			],
+			correct: 3,
+			explanation: 'L\'event bubbling est la propagation d\'un événement depuis l\'élément cible vers ses parents dans le DOM.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment empêcher le comportement par défaut d\'un événement ?',
+			code: 'element.addEventListener("click", function(event) {\n  ???\n});',
+			options: ['event.preventDefault()', 'event.stop()', 'event.cancel()', 'return false'],
+			correct: 0,
+			explanation: 'event.preventDefault() empêche l\'action par défaut de l\'événement (ex: soumission de formulaire, navigation de lien).'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment créer un objet vide ?',
+			options: ['{}', 'new Object()', 'Toutes les réponses', 'Object.create(null)'],
+			correct: 2,
+			explanation: 'Toutes ces méthodes créent un objet. {} est la plus courante, Object.create(null) crée un objet sans prototype.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que fait la méthode reduce() ?',
+			code: 'let numbers = [1,2,3,4];\nlet sum = numbers.reduce((acc, curr) => acc + curr, 0);',
+			options: [
+				'Filtre les éléments',
+				'Trie le tableau',
+				'Réduit le tableau à une seule valeur en appliquant une fonction',
+				'Supprime des éléments'
+			],
+			correct: 2,
+			explanation: 'reduce() applique une fonction à un accumulateur et chaque élément pour réduire le tableau à une seule valeur.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Qu\'est-ce que le destructuring ?',
+			code: 'const {name, age} = person;\nconst [first, second] = array;',
+			options: [
+				'Une erreur de syntaxe',
+				'Une méthode pour créer des objets',
+				'Une façon d\'extraire des valeurs d\'objets et tableaux',
+				'Une boucle spéciale'
+			],
+			correct: 2,
+			explanation: 'Le destructuring permet d\'extraire des valeurs d\'objets ou tableaux et de les assigner à des variables de manière concise.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment vérifier si une propriété existe dans un objet ?',
+			code: 'let obj = {name: "John"};\n// Vérifier si "name" existe',
+			options: ['"name" in obj', 'obj.hasOwnProperty("name")', 'Toutes les réponses', 'obj.name !== undefined'],
+			correct: 2,
+			explanation: 'in, hasOwnProperty(), et vérifier !== undefined fonctionnent tous, avec des nuances sur l\'héritage de propriétés.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment créer une fonction fléchée qui prend un paramètre ?',
+			options: ['const fn = (x) => x * 2', 'const fn = x -> x * 2', 'const fn = x => x * 2', 'A et C fonctionnent'],
+			correct: 3,
+			explanation: 'Pour un seul paramètre, les parenthèses sont optionnelles : x => x * 2 ou (x) => x * 2.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Que fait ce code avec bind() ?',
+			code: 'const obj = {name: "John"};\nfunction greet() { console.log(this.name); }\nconst boundGreet = greet.bind(obj);\nboundGreet();',
+			options: [
+				'Affiche undefined',
+				'Provoque une erreur',
+				'Affiche "greet"',
+				'Affiche "John"'
+			],
+			correct: 3,
+			explanation: 'bind() crée une nouvelle fonction avec this lié à l\'objet fourni. Ici, this.name sera "John".'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment transformer un NodeList en Array ?',
+			code: 'const nodeList = document.querySelectorAll("div");\nconst array = ???;',
+			options: ['Array.from(nodeList)', '[...nodeList]', 'Toutes les réponses', 'Array.prototype.slice.call(nodeList)'],
+			correct: 2,
+			explanation: 'Toutes ces méthodes convertissent un NodeList en Array : Array.from(), spread operator, ou slice.call().'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment créer une boucle qui parcourt un tableau ?',
+			code: 'let arr = [1,2,3];\nfor (??? of arr) {\n  console.log(item);\n}',
+			options: ['let item', 'Toutes fonctionnent', 'const item', 'var item'],
+			correct: 1,
+			explanation: 'let, const, ou var fonctionnent dans for...of. const est préféré si on ne modifie pas la variable.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Qu\'est-ce que l\'operator precedence ?',
+			code: 'console.log(2 + 3 * 4);',
+			options: ['Donne 20 (addition d\'abord)', 'Provoque une erreur', 'Donne 14 (multiplication d\'abord)', 'Donne 24'],
+			correct: 2,
+			explanation: 'La multiplication a une précédence plus élevée que l\'addition : 2 + (3 * 4) = 2 + 12 = 14.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment créer une copie profonde d\'un objet simple ?',
+			code: 'let original = {a: {b: 1}};\nlet copy = ???;',
+			options: ['JSON.parse(JSON.stringify(original))', '{...original}', 'original.clone()', 'Object.assign({}, original)'],
+			correct: 0,
+			explanation: 'JSON.parse(JSON.stringify()) crée une copie profonde pour les objets simples. Les autres créent des copies superficielles.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que fait la méthode find() ?',
+			code: 'let users = [{name: "John", age: 25}, {name: "Jane", age: 30}];\nlet user = users.find(u => u.age > 25);',
+			options: [
+				'Retourne tous les éléments qui correspondent',
+				'Retourne true/false',
+				'Retourne le premier élément qui correspond',
+				'Modifie le tableau'
+			],
+			correct: 2,
+			explanation: 'find() retourne le premier élément qui passe le test, ou undefined si aucun ne correspond.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Comment fonctionne le module pattern ?',
+			code: 'const MyModule = (function() {\n  let privateVar = 0;\n  return {\n    increment: () => privateVar++,\n    getCount: () => privateVar\n  };\n})();',
+			options: [
+				'Crée des variables globales',
+				'Provoque une erreur',
+				'N\'a aucun effet',
+				'Encapsule des données privées avec une API publique'
+			],
+			correct: 3,
+			explanation: 'Le module pattern utilise une IIFE pour créer un scope privé, exposant seulement l\'API publique via l\'objet retourné.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment définir une propriété non-énumérable ?',
+			code: 'let obj = {};\nObject.defineProperty(obj, "hidden", {\n  value: "secret",\n  ???: false\n});',
+			options: ['visible', 'iterable', 'enumerable', 'accessible'],
+			correct: 2,
+			explanation: 'enumerable: false rend la propriété non-visible dans for...in et Object.keys().'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment obtenir la longueur d\'une chaîne ?',
+			code: 'let text = "Hello World";\nconsole.log(text.???);',
+			options: ['length', 'size', 'count', 'len'],
+			correct: 0,
+			explanation: 'La propriété length retourne le nombre de caractères dans une chaîne.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que fait la méthode some() ?',
+			code: 'let numbers = [1,2,3,4,5];\nlet hasEven = numbers.some(n => n % 2 === 0);',
+			options: [
+				'Retourne true si tous les éléments passent le test',
+				'Retourne le nombre d\'éléments qui passent',
+				'Retourne true si au moins un élément passe le test',
+				'Modifie le tableau'
+			],
+			correct: 2,
+			explanation: 'some() retourne true si au moins un élément passe le test de la fonction fournie.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Comment implémenter un simple polyfill pour Array.prototype.includes ?',
+			code: 'if (!Array.prototype.includes) {\n  Array.prototype.includes = function(searchElement) {\n    ???\n  };\n}',
+			options: [
+				'return this.indexOf(searchElement) !== -1',
+				'return this.find(searchElement)',
+				'return searchElement in this',
+				'return this.contains(searchElement)'
+			],
+			correct: 0,
+			explanation: 'includes() peut être implémenté en vérifiant si indexOf() ne retourne pas -1.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment empêcher la modification d\'un objet ?',
+			code: 'let obj = {name: "John"};\n???(obj);\nobj.name = "Jane"; // N\'aura aucun effet',
+			options: ['Object.lock', 'Object.freeze', 'Object.protect', 'Object.immutable'],
+			correct: 1,
+			explanation: 'Object.freeze() rend un objet immutable - ses propriétés ne peuvent plus être modifiées, ajoutées ou supprimées.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Qu\'est-ce que le temporal dead zone ?',
+			code: 'console.log(myVar); // ???\nlet myVar = 5;',
+			options: [
+				'Affiche undefined',
+				'Affiche 5',
+				'Affiche null',
+				'ReferenceError: Cannot access before initialization'
+			],
+			correct: 3,
+			explanation: 'Le temporal dead zone est la période entre l\'entrée dans le scope et l\'initialisation des variables let/const.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment créer un générateur en JavaScript ?',
+			code: 'function* myGenerator() {\n  yield 1;\n  yield 2;\n  yield 3;\n}',
+			options: [
+				'function* est la syntaxe correcte',
+				'function generator() est correct',
+				'async function() est équivalent',
+				'C\'est une erreur de syntaxe'
+			],
+			correct: 0,
+			explanation: 'function* crée un générateur qui peut suspendre et reprendre son exécution avec yield.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment convertir une chaîne en tableau de caractères ?',
+			code: 'let text = "hello";\nlet chars = ???;',
+			options: ['text.split("")', 'Toutes les réponses', '[...text]', 'Array.from(text)'],
+			correct: 1,
+			explanation: 'split(""), spread operator [...], et Array.from() convertissent tous une chaîne en tableau de caractères.'
+		},
+		{
+        type: 'javascript',
+        difficulty: 'facile',
+        question: 'Comment créer une variable constante ?',
+        options: ['var PI = 3.14;', 'let PI = 3.14;', 'constant PI = 3.14;', 'const PI = 3.14;'],
+        correct: 3,
+        explanation: 'const crée une variable constante qui ne peut pas être réassignée après sa déclaration initiale.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que fait cette expression régulière ?',
+			code: 'const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\nregex.test("user@example.com");',
+			options: [
+				'Valide un nom d\'utilisateur',
+				'Valide un mot de passe',
+				'Valide une adresse email',
+				'Valide un numéro de téléphone'
+			],
+			correct: 2,
+			explanation: 'Cette regex valide le format d\'une adresse email en vérifiant la présence d\'un @ et d\'un domaine valide.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Comment implémenter un throttle function ?',
+			code: 'function throttle(func, delay) {\n  let lastCall = 0;\n  return function(...args) {\n    const now = Date.now();\n    if (now - lastCall >= delay) {\n      lastCall = now;\n      return func.apply(this, args);\n    }\n  };\n}',
+			options: [
+				'Limite les appels de fonction à un par période',
+				'Retarde tous les appels de fonction',
+				'Accélère l\'exécution des fonctions',
+				'Annule les appels précédents'
+			],
+			correct: 0,
+			explanation: 'Throttle limite l\'exécution d\'une fonction à une fois par période donnée, contrairement à debounce qui retarde.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que retourne cette opération ?',
+			code: 'console.log(0.1 + 0.2 === 0.3);',
+			options: ['true', 'undefined', 'false', 'NaN'],
+			correct: 2,
+			explanation: 'À cause de la représentation des nombres flottants, 0.1 + 0.2 = 0.30000000000000004, donc l\'égalité stricte retourne false.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment créer un commentaire sur plusieurs lignes ?',
+			options: ['// Commentaire', '<!-- Commentaire -->', '/* Commentaire */', '# Commentaire'],
+			correct: 2,
+			explanation: '/* */ permet de créer des commentaires sur plusieurs lignes. // ne fonctionne que pour une seule ligne.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Qu\'est-ce que l\'event delegation ?',
+			code: 'document.getElementById("parent").addEventListener("click", function(e) {\n  if (e.target.classList.contains("child")) {\n    console.log("Child clicked!");\n  }\n});',
+			options: [
+				'Une erreur de programmation',
+				'Attacher un événement au parent pour gérer les événements des enfants',
+				'Supprimer des événements',
+				'Créer des événements personnalisés'
+			],
+			correct: 1,
+			explanation: 'L\'event delegation utilise le bubbling pour gérer les événements des enfants via un écouteur sur le parent, optimisant les performances.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment vérifier le type exact d\'une variable ?',
+			code: 'let arr = [1, 2, 3];\nconsole.log(???.call(arr));',
+			options: ['typeof', 'arr.constructor.name', 'Object.prototype.toString', 'instanceof'],
+			correct: 2,
+			explanation: 'Object.prototype.toString.call() retourne le type exact comme "[object Array]", contrairement à typeof qui retourne "object".'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment créer une chaîne multiligne ?',
+			options: [
+				'"Line 1\\nLine 2"',
+				'`Line 1\nLine 2`',
+				'Les deux A et B fonctionnent',
+				'"Line 1\nLine 2"'
+			],
+			correct: 2,
+			explanation: 'Les template literals (backticks) permettent les chaînes multilignes naturelles, ou on peut utiliser \\n avec des guillemets.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Comment fonctionnent les WeakMap ?',
+			code: 'const wm = new WeakMap();\nconst obj = {};\nwm.set(obj, "value");\n// obj = null; - l\'objet peut être collecté par le garbage collector',
+			options: [
+				'Comme une Map normale',
+				'Permettent au garbage collector de supprimer les clés/valeurs inutilisées',
+				'Sont plus rapides que Map',
+				'Stockent seulement des primitives'
+			],
+			correct: 1,
+			explanation: 'WeakMap utilise des références faibles : si l\'objet-clé n\'est plus référencé ailleurs, l\'entrée peut être supprimée automatiquement.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que fait l\'opérateur nullish coalescing (??) ?',
+			code: 'const result = null ?? "default";\nconst result2 = undefined ?? "default";\nconst result3 = "" ?? "default";',
+			options: [
+				'Retourne "default" pour toutes les valeurs falsy',
+				'Retourne "default" seulement pour null et undefined',
+				'Provoque une erreur',
+				'Équivalent à ||'
+			],
+			correct: 1,
+			explanation: '?? retourne la valeur de droite seulement si la gauche est null ou undefined, contrairement à || qui teste toutes les valeurs falsy.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment incrémenter une variable de 1 ?',
+			options: ['x += 1;', 'x++;', '++x;', 'Toutes ces méthodes fonctionnent'],
+			correct: 3,
+			explanation: 'x++, ++x et x += 1 incrémentent tous la variable. La différence entre x++ et ++x est le moment du retour de la valeur.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Comment créer une fonction pure ?',
+			code: 'function add(a, b) {\n  return a + b;\n}\n\nfunction impureAdd(a, b) {\n  console.log("Adding");\n  return a + b;\n}',
+			options: [
+				'Une fonction qui ne retourne rien',
+				'Une fonction sans effets de bord qui retourne toujours le même résultat pour les mêmes entrées',
+				'Une fonction qui utilise seulement des const',
+				'Une fonction sans paramètres'
+			],
+			correct: 1,
+			explanation: 'Une fonction pure n\'a pas d\'effets de bord (pas de console.log, modifications globales, etc.) et retourne toujours le même résultat.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que fait la méthode every() ?',
+			code: 'let numbers = [2, 4, 6, 8];\nlet allEven = numbers.every(n => n % 2 === 0);',
+			options: [
+				'Retourne true si tous les éléments passent le test',
+				'Retourne true si au moins un élément passe le test',
+				'Transforme tous les éléments',
+				'Filtre les éléments'
+			],
+			correct: 0,
+			explanation: 'every() retourne true seulement si tous les éléments du tableau passent le test de la fonction fournie.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Qu\'est-ce qu\'un Iterator en JavaScript ?',
+			code: 'const arr = [1, 2, 3];\nconst iterator = arr[Symbol.iterator]();\nconsole.log(iterator.next());',
+			options: [
+				'Un objet qui implémente le protocole d\'itération avec une méthode next()',
+				'Une fonction de boucle',
+				'Un type de tableau',
+				'Une méthode pour trier'
+			],
+			correct: 0,
+			explanation: 'Un Iterator est un objet avec une méthode next() qui retourne {value, done} permettant de parcourir une collection.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Comment créer un objet sans prototype ?',
+			options: ['{}', 'new Object()', 'Object.create(null)', 'Object()'],
+			correct: 2,
+			explanation: 'Object.create(null) crée un objet complètement vide sans prototype, contrairement à {} qui hérite d\'Object.prototype.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment comparer deux chaînes en ignorant la casse ?',
+			code: 'let str1 = "Hello";\nlet str2 = "HELLO";\n// Comment les comparer ?',
+			options: [
+				'str1 === str2',
+				'str1.toLowerCase() === str2.toLowerCase()',
+				'str1.compare(str2)',
+				'str1.equals(str2)'
+			],
+			correct: 1,
+			explanation: 'En convertissant les deux chaînes en minuscules (ou majuscules) avant la comparaison, on ignore la casse.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Comment implémenter un memoization simple ?',
+			code: 'function memoize(fn) {\n  const cache = {};\n  return function(...args) {\n    const key = JSON.stringify(args);\n    if (key in cache) {\n      return cache[key];\n    }\n    const result = fn.apply(this, args);\n    cache[key] = result;\n    return result;\n  };\n}',
+			options: [
+				'Cache les résultats pour éviter les recalculs',
+				'Accélère toutes les fonctions automatiquement',
+				'Provoque des fuites mémoire',
+				'Ne fonctionne qu\'avec les nombres'
+			],
+			correct: 0,
+			explanation: 'La memoization stocke les résultats des appels de fonction pour éviter de recalculer avec les mêmes paramètres.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'moyen',
+			question: 'Que fait l\'opérateur optional chaining (?.) avec les méthodes ?',
+			code: 'const obj = { method: null };\nobj.method?.(); // Que se passe-t-il ?',
+			options: [
+				'Appelle la méthode normalement',
+				'Provoque une erreur',
+				'Retourne undefined sans appeler la méthode',
+				'Crée une nouvelle méthode'
+			],
+			correct: 2,
+			explanation: 'obj.method?.() vérifie si method existe et est une fonction avant de l\'appeler, sinon retourne undefined.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'facile',
+			question: 'Comment créer un nombre aléatoire entre 1 et 10 ?',
+			options: [
+				'Math.random() * 10',
+				'Math.floor(Math.random() * 10) + 1',
+				'Math.ceil(Math.random() * 10)',
+				'B et C donnent le même résultat'
+			],
+			correct: 3,
+			explanation: 'Math.floor(Math.random() * 10) + 1 et Math.ceil(Math.random() * 10) génèrent tous deux un entier entre 1 et 10 inclus.'
+		},
+		{
+			type: 'javascript',
+			difficulty: 'difficile',
+			question: 'Comment fonctionne l\'operateur spread avec les objets ?',
+			code: 'const obj1 = { a: 1, b: 2 };\nconst obj2 = { b: 3, c: 4 };\nconst merged = { ...obj1, ...obj2 };\nconsole.log(merged);',
+			options: [
+				'Provoque une erreur de duplication',
+				'Les propriétés de obj2 écrasent celles de obj1 en cas de conflit',
+				'Crée un tableau des propriétés',
+				'Ignore les propriétés en double'
+			],
+			correct: 1,
+			explanation: 'Le spread operator avec les objets fusionne les propriétés, les dernières valeurs écrasant les précédentes en cas de clés identiques.'
+		},
+		{
+        type: 'css',
+        difficulty: 'facile',
+        question: 'Comment définir la largeur d\'un élément ?',
+        code: '.box { ??? }',
+        options: ['size: 200px;', 'width: 200px;', 'w: 200px;', 'length: 200px;'],
+        correct: 1,
+        explanation: 'La propriété width définit la largeur d\'un élément. Elle peut prendre des valeurs en px, %, em, rem, etc.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment changer la taille du texte ?',
+			options: ['text-size: 18px;', 'size: 18px;', 'font-size: 18px;', 'font: 18px;'],
+			correct: 2,
+			explanation: 'font-size contrôle la taille du texte. Elle peut être exprimée en px, em, rem, %, ou avec des mots-clés comme small, large.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Quelle est la différence entre margin et padding ?',
+			code: '.element {\n  margin: 10px;\n  padding: 15px;\n}',
+			options: [
+				'Aucune différence',
+				'margin = espace extérieur, padding = espace intérieur',
+				'padding = espace extérieur, margin = espace intérieur',
+				'margin pour le texte, padding pour les images'
+			],
+			correct: 1,
+			explanation: 'margin ajoute de l\'espace à l\'extérieur de l\'élément, padding ajoute de l\'espace à l\'intérieur entre le contenu et la bordure.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment créer une bordure rouge de 2px ?',
+			options: ['border: 2px red;', 'border: 2px solid red;', 'border: red 2px;', 'border-color: red; border-size: 2px;'],
+			correct: 1,
+			explanation: 'border: largeur style couleur; est la syntaxe complète. "solid" définit le style de bordure (solid, dashed, dotted, etc.).'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment centrer un bloc horizontalement ?',
+			code: '.center {\n  width: 300px;\n  ???\n}',
+			options: ['text-align: center;', 'align: center;', 'margin: 0 auto;', 'center: true;'],
+			correct: 2,
+			explanation: 'margin: 0 auto; centre horizontalement un élément bloc avec une largeur définie. 0 pour top/bottom, auto pour left/right.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment changer l\'arrière-plan d\'un élément ?',
+			options: ['bg-color: blue;', 'color: blue;', 'background-color: blue;', 'back-color: blue;'],
+			correct: 2,
+			explanation: 'background-color définit la couleur d\'arrière-plan. color définit la couleur du texte.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment sélectionner tous les éléments <p> dans une div ?',
+			options: ['div + p', 'div > p', 'div p', 'div.p'],
+			correct: 2,
+			explanation: 'div p sélectionne tous les <p> descendants de <div>. div > p ne sélectionne que les enfants directs.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment rendre un texte en gras ?',
+			code: '.bold { ??? }',
+			options: ['font-weight: bold;', 'text-weight: bold;', 'bold: true;', 'font-style: bold;'],
+			correct: 0,
+			explanation: 'font-weight: bold; rend le texte en gras. Autres valeurs : normal, lighter, bolder, ou des nombres (100-900).'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment créer une liste sans puces ?',
+			code: 'ul {\n  ???\n}',
+			options: ['bullets: none;', 'list-style: none;', 'list-bullets: hide;', 'markers: none;'],
+			correct: 1,
+			explanation: 'list-style: none; supprime les puces des listes. On peut aussi utiliser list-style-type: none;'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment définir la hauteur d\'un élément ?',
+			options: ['h: 100px;', 'height: 100px;', 'size-y: 100px;', 'vertical: 100px;'],
+			correct: 1,
+			explanation: 'height définit la hauteur d\'un élément, comme width définit la largeur.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment appliquer un style au survol de la souris ?',
+			code: '.button {\n  background: blue;\n}\n.button??? {\n  background: red;\n}',
+			options: [':hover', ':mouse', ':over', ':focus'],
+			correct: 0,
+			explanation: ':hover est la pseudo-classe qui s\'active quand la souris survole l\'élément.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment aligner le texte à droite ?',
+			options: ['align: right;', 'text-align: right;', 'text-position: right;', 'horizontal-align: right;'],
+			correct: 1,
+			explanation: 'text-align contrôle l\'alignement horizontal du texte : left, right, center, justify.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment créer un élément qui flotte à droite ?',
+			code: '.sidebar {\n  ???\n}',
+			options: ['position: right;', 'align: right;', 'float: right;', 'move: right;'],
+			correct: 2,
+			explanation: 'float: right; fait flotter l\'élément à droite, permettant au contenu de l\'entourer. Attention aux clearfix.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment changer la couleur d\'une bordure ?',
+			options: ['border-color: green;', 'border: green;', 'color-border: green;', 'edge-color: green;'],
+			correct: 0,
+			explanation: 'border-color définit spécifiquement la couleur de la bordure, indépendamment de sa largeur et de son style.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment cacher un élément mais garder son espace dans la page ?',
+			options: ['display: none;', 'visibility: hidden;', 'opacity: 0;', 'hide: true;'],
+			correct: 1,
+			explanation: 'visibility: hidden; cache l\'élément mais conserve son espace. display: none; le retire complètement du flux.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment définir plusieurs valeurs de margin ?',
+			code: '.box { margin: 10px 20px 15px 5px; }',
+			options: [
+				'top, right, bottom, left',
+				'left, right, top, bottom', 
+				'top, left, bottom, right',
+				'right, bottom, left, top'
+			],
+			correct: 0,
+			explanation: 'L\'ordre est : top, right, bottom, left (sens horaire). Raccourcis possibles : 10px (tous), 10px 20px (vertical horizontal).'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment sélectionner le premier enfant d\'un élément ?',
+			code: 'div ??? {\n  color: red;\n}',
+			options: [':first', ':first-child', ':child(1)', ':nth-child(0)'],
+			correct: 1,
+			explanation: ':first-child sélectionne le premier élément enfant de son parent.'
+		},
+		{
+			type: 'css',
+			difficulty: 'facile',
+			question: 'Comment rendre un texte en italique ?',
+			options: ['font-style: italic;', 'text-style: italic;', 'font-weight: italic;', 'italic: true;'],
+			correct: 0,
+			explanation: 'font-style: italic; rend le texte en italique. Autres valeurs : normal, oblique.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment créer un espacement entre les lettres ?',
+			code: '.spaced {\n  ???\n}',
+			options: ['char-spacing: 2px;', 'letter-spacing: 2px;', 'text-spacing: 2px;', 'font-spacing: 2px;'],
+			correct: 1,
+			explanation: 'letter-spacing contrôle l\'espacement entre les caractères. word-spacing contrôle l\'espacement entre les mots.'
+		},
+		{
+			type: 'css',
+			difficulty: 'moyen',
+			question: 'Comment empêcher le retour à la ligne du texte ?',
+			code: '.no-wrap {\n  ???\n}',
+			options: ['wrap: none;', 'text-wrap: none;', 'white-space: nowrap;', 'line-break: none;'],
+			correct: 2,
+			explanation: 'white-space: nowrap; empêche le texte de passer à la ligne, même si le conteneur est trop petit.'
+		}
+	];
+
+        // Initialiser l'application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ajouter les questions supplémentaires
+            const app = new TechTrainingProgram();
+			
+            app.questions.push(...additionalQuestions);
+			console.log(app.questions.length);
+            app.filteredQuestions = [...app.questions];
+            app.updateStats();
+        });
+    </script>
+</body>
+</html>
