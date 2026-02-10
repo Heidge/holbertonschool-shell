@@ -1,4 +1,4 @@
-# <p align=center>Shell</p>
+# <p align=center>Shell & bash learning</p>
 <br />
 
 ## About projects
